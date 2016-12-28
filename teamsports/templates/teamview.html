@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<table border="3" width="400" height="120" cellpadding="8" cellspacing="8">
+<tr>
+<th>Team Name</th>
+<th>Wins</th>
+<th>Losses</th>
+<th>Ties</th>
+</tr>
+    <tr>
+    <th><h1>{{ team }}</h1></th>
+    <th><h1>{{ team.win }}</h1></th>
+    <th><h1> {{ team.loss }}</h1></th>
+    <th><h1>{{ team.tie }}</h1></th>
+    </tr>
+</table>
+<table border="5" width="400" height="120" cellpadding="8" cellspacing="8">
+<tr>
+    <h1>Results: </h1>
+    <th>Date</th>
+    <th>Home Team</th>
+    <th>Score</th>
+    <th>Away Team</th>
+    <th>Score</th>
+    </tr>
+        {% for game in game_list %}
+        <tr>
+   <p><th> {{ game.match_date|date }} </th> <th><a href="/teamview/?team_name={{ game.home.team }}"> {{ game.home.team_name }}</a></th>  <th> {{ game.home_score }} </th> <th><a href="/teamview/?team_name={{ game_away.team_name }}">{{ game.away.team_name }}</a> </th> <th> {{ game.away_score }} </th></p>
+        {% endfor %}
+        </tr>
+        </table>
+
+
+    <li><a href="/standings/">Pick another, ya jabroni</a></li>
+
+
+{% endblock %}

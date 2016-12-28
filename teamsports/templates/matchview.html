@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <table border="3" width="400" height="100" cellpadding="5" cellspacing="5">
+    <tr>
+    <tr>
+<th>Date</th>
+<th>Home Team</th>
+<th>Score</th>
+<th>Away Team</th>
+<th>Score</th>
+</tr>
+    {% if game.home_score == NULL %}
+    <p><th> date: {{ game.match_date }} </th> <th> <a href="/teamview/?team_name={{ game.home }}">{{ game.home}}</a> </th>  <th> Away: Team {{ game.away }} </th> </p>
+    {% else %}
+       <p>date <th> {{ game.match_date }}</th> <th> <a href="/teamview/?team_name={{ game.home }}">{{ game.home}}</a> </th> <th> {{ game.home_score }}</th> <th> <a href="/teamview/?team_name={{ game.away }}">{{ game.away}}</a> </th> <th> {{ game.away_score }}</th></p>
+    {% endif %}
+    </tr>
+    <li><a href="/matchselect/">Pick another, ya jabroni</a></li>
+{% endblock %}

@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<body>
+    <h1>The Pub Coach/Reporter Login</h1>
+
+    <h2> Report a Game</h2>
+ <form action= {% url 'ScoreReport' %} method="GET">
+    {{ match_form }}
+    <input type="submit" value="Submit" />
+    {{ form.errors }}
+</form>
+
+    Hey Saltz, change this to ReportGame, ya jabroni
+
+<h1>Change team information</h1>
+<form action= {% url 'EditTeam' %} method="GET">
+    {{ team_form }}
+    <input type="submit" value="Submit" />
+    {{ form.errors }}
+</form>
+
+Change this too
+</body>
+
+{% endblock %}

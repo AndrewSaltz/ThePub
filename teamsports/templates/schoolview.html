@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<title>{{ school }}</title>
+<h1> {{ school }} </h1>
+<table border="3" width="400" height="150" cellpadding="8" cellspacing="8">
+<tr>
+<th>Team Name</th>
+<th>Sport</th>
+<th>Wins</th>
+<th>Losses</th>
+<th>Ties</th>
+</tr>
+
+<tr>
+{% for school_list in school_list %}
+<h2><th>{{ school_list.team_name }}</th> <td>{{ school_list.sport_id }}</td> <td>{{ school_list.win }}</td> <td>{{ school_list.loss }}</td></h2>
+</tr>
+{% endfor %}
+</table>
+
+
+    <li><a href="/selectschool/">Pick another, ya jabroni</a></li>
+
+{% endblock %}

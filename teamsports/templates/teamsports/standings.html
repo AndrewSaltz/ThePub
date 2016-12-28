@@ -1,0 +1,15 @@
+<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h1>Pick your team </h1>
+
+<form action= {% url 'TeamView' %} method="GET">
+    {{ form }}
+    <input type="submit" value="Submit" />
+    {{ form.errors }}
+</form>
+{% endblock %}

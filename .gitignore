@@ -1,0 +1,8 @@
+*.pyc
+*~
+__pycache__
+myvenv
+mrsaltz$publeague
+/static
+.DS_Store
+db.sqlite3
