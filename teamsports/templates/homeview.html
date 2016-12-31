@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<body>
+
+    <h1>*Your* Public League!</h1>
+
+<h2>Select a Team</h2>
+<form action= {% url 'TeamView' %} method="GET">
+    {{ select_team_form }}
+    <input type="submit" value="Submit" />
+    {{ form.errors }}
+</form>
+
+<h2>Select a Game</h2>
+<form action= {% url 'GameView' %} method="GET">
+    {{ select_match_form }}
+    <input type="submit" value="Submit" />
+    {{ form.errors }}
+</form>
+
+<h2>Select a Sport</h2>
+<form action= {% url 'SportView' %} method="GET">
+    {{ select_sport_form }}
+    <input type="submit" value="Submit" />
+    {{ form.errors }}
+</form>
+
+<h2>Select a School</h2>
+<form action= {% url 'SchoolView' %} method="GET">
+    {{ select_school_form }}
+    <input type="submit" value="Submit" />
+    {{ form.errors }}
+</form>
+</body>
+{% endblock %}

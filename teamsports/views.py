@@ -4,11 +4,11 @@ from django.core.urlresolvers import reverse_lazy
 from django.views.generic.edit import FormView, UpdateView
 from teamsports.models import School, Teams, Schedule, Sports
 from django.shortcuts import get_object_or_404, HttpResponseRedirect, render, redirect
-from teamsports.forms import SelectTeam, SelectMatch, SelectSport, SelectSchool, ReportScore
+from teamsports.forms import SelectTeam, SelectMatch, SelectSport, SelectSchool
 from django.db.models import Q
+from django.views.generic import TemplateView
 from django.views import generic
 from django.contrib.auth.mixins import LoginRequiredMixin
-
 
 def home(request):
     schools = School.objects.all()
@@ -60,7 +60,7 @@ class GameView(generic.TemplateView):
         q = self.request.GET.get('match')
         context['game'] = Schedule.objects.get(match=q)
         return context
-
+"""
 class SelectSport(FormView):
     form_class = SelectSport
     template_name = 'selectsport.html'
@@ -73,18 +73,18 @@ class SelectSport(FormView):
 
     def form_invalid(self,form):
         HttpResponse ("This didn't work")
+"""
 
-
-class SportView(generic.TemplateView):
+class SportView(TemplateView):
     template_name = "sportview.html"
 
     def get_context_data(self, **kwargs):
         context = super(SportView, self).get_context_data(**kwargs)
         q = self.request.GET.get('sport')
-        context['sport'] = Teams.objects.filter(sport_id=q).order_by('win')
+        context['sport'] = Teams.objects.filter(sport_id=q).order_by('-win')
         context['sport_name'] = Sports.objects.get(sport=q)
         return context
-
+"""
 class SelectSchool(FormView):
     form_class = SelectSchool
     template_name = 'selectsport.html'
@@ -97,7 +97,7 @@ class SelectSchool(FormView):
 
     def form_invalid(self,form):
         HttpResponse ("This didn't work")
-
+"""
 class SchoolView(generic.TemplateView):
     template_name = "schoolview.html"
 
@@ -122,7 +122,6 @@ class CoachView(LoginRequiredMixin, generic.TemplateView):
         context['team_form'] = team_form
         context['match_form'] = match_form
         return self.render_to_response(context)
-
 
 class ScoreReport(UpdateView):
     template_name = 'reportscore.html'
@@ -149,4 +148,19 @@ class EditTeam(UpdateView):
         obj=Teams.objects.get(team=q)
         return obj
 
+class HomeView(generic.TemplateView):
+    template_name = "homeview.html"
+
+    def get(self, request, *args, **kwargs):
+        context = super(HomeView, self).get_context_data(**kwargs)
+        select_team_form = SelectTeam(self.request.GET or None)
+        select_match_form = SelectMatch(self.request.GET or None)
+        select_sport_form = SelectSport(self.request.GET or None)
+        select_school_form = SelectSchool(self.request.GET or None)
+        context = self.get_context_data(**kwargs)
+        context ['select_team_form'] = select_team_form
+        context ['select_match_form'] = select_match_form
+        context ['select_sport_form'] = select_sport_form
+        context ['select_school_form'] = select_school_form
+        return self.render_to_response(context)
 

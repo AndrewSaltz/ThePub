@@ -7,19 +7,18 @@
 <tr>
 <th>Team Name</th>
 <th>Division</th>
-<th>School</th>
 <th>Wins</th>
 <th>Losses</th>
 <th>Ties</th>
 </tr>
 <tr>
 {% for sport in sport %}
-    <p><th><a href="/teamview/?team_name={{ sport.team }}">{{ sport.team_name }}</a></th> <th>{{ sport.division }}</th>  <th><a href="/schoolview/?school={{ sport.school_id }}">{{ sport.school }}</a></th> <th>{{ sport.win }} </th> <th>{{ sport.loss }} </th> <th>{{ sport.tie }} </th></p>
+    <p><th><a href="/teamview/?team_name={{ sport.team }}">{{ sport.team_name }}</a></th> <th>{{ sport.division }}</th>  <th>{{ sport.win }} </th> <th>{{ sport.loss }} </th> <th>{{ sport.tie }} </th></p>
 </tr>
 
 {% endfor %}
 </table>
 
-    <li><a href="/selectsport/">Pick another, ya jabroni</a></li>
+    <li><a href="/home/">Pick another, ya jabroni</a></li>
 
 {% endblock %}

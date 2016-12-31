@@ -29,8 +29,10 @@ class School(models.Model):
     def __str__(self):
         return self.school_name
 
-class SchoolAdmin(admin.ModelAdmin):
-    fields = ('school_name')
+#class SchoolAdmin(admin.ModelAdmin):
+ #   model = School
+  #  list_display = ('school_name')
+  #Didn't need this and was screwing with the admin
 
 class Teams(models.Model):
     team = models.AutoField(primary_key=True)
@@ -46,7 +48,7 @@ class Teams(models.Model):
         managed = True
         db_table = 'teams'
     def __str__(self):
-        return '%s %s'% (self.team_name, self.sport_id)
+        return '%s' % (self.team_name)
 
 class TeamsAdmin(admin.ModelAdmin):
     model = Teams

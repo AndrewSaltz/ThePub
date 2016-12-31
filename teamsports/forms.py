@@ -47,10 +47,3 @@ class SelectSchool(ModelForm):
         model = School
         fields = ['school']
 
-
-#Note sure we need this with Updateview
-class ReportScore(ModelForm):
-    class Meta:
-        model = Schedule
-        fields = ['match_date', 'home_score', 'away_score']
-
