@@ -1,18 +1,23 @@
 # Create your views here.
 from django.http import HttpResponse
+from django.views.generic.list import ListView
 from django.core.urlresolvers import reverse_lazy
-from django.views.generic.edit import FormView, UpdateView
-from teamsports.models import School, Teams, Schedule, Sports
+from django.views.generic.edit import FormView, UpdateView, CreateView, DeleteView
+from teamsports.models import School, Teams, Schedule, Sports, Photo, GameNotes
 from django.shortcuts import get_object_or_404, HttpResponseRedirect, render, redirect
 from teamsports.forms import SelectTeam, SelectMatch, SelectSport, SelectSchool
 from django.db.models import Q
 from django.views.generic import TemplateView
 from django.views import generic
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from datetime import datetime
+from braces.views import GroupRequiredMixin
 
 def home(request):
-    schools = School.objects.all()
-    return render(request, 'teamsports/home.html', {'schools' : schools})
+    now = datetime.now()
+    games = Schedule.objects.filter(match_date__gt=now).order_by('match_date')
+    last = Schedule.objects.filter(match_date__lte=now).order_by('-match_date')
+    return render(request, 'teamsports/home.html', {'games' : games, 'last' : last})
 
 class StandingsView(FormView):
     form_class = SelectTeam
@@ -58,7 +63,9 @@ class GameView(generic.TemplateView):
     def get_context_data(self, **kwargs):
         context = super(GameView, self).get_context_data(**kwargs)
         q = self.request.GET.get('match')
+        context['report'] = GameNotes.objects.filter(game=q)
         context['game'] = Schedule.objects.get(match=q)
+        context['gamepic'] = Photo.objects.filter(game=q)
         return context
 """
 class SelectSport(FormView):
@@ -109,9 +116,10 @@ class SchoolView(generic.TemplateView):
         #Need to add Next Game function...maybe in models?
         return context
 
-class CoachView(LoginRequiredMixin, generic.TemplateView):
+class CoachView(GroupRequiredMixin, generic.TemplateView):
     template_name = "coachview.html"
     login_url = '/login/'
+    group_required = [u"coach", u"staff"]
     redirect_field_name = 'redirect_to'
 
     def get(self, request, *args, **kwargs):
@@ -123,11 +131,13 @@ class CoachView(LoginRequiredMixin, generic.TemplateView):
         context['match_form'] = match_form
         return self.render_to_response(context)
 
-class ScoreReport(UpdateView):
+class ScoreReport(UpdateView, GroupRequiredMixin):
     template_name = 'reportscore.html'
     model = Schedule
     fields = ['home_score', 'away_score']
     success_url = reverse_lazy('CoachView')
+    login_url = '/login/'
+    group_required = [u"coach", u"staff", u"reporter"]
 
     def get_object(self):
         q = self.request.GET.get('match')
@@ -140,6 +150,8 @@ class EditTeam(UpdateView):
     model = Teams
     fields = ['team_name']
     success_url = reverse_lazy('CoachView')
+    login_url = '/login/'
+    group_required = [u"coach", u"staff"]
 
     #This will matter more with rosters and pictures
 
@@ -164,3 +176,44 @@ class HomeView(generic.TemplateView):
         context ['select_school_form'] = select_school_form
         return self.render_to_response(context)
 
+class AddPic(CreateView):
+    template_name = 'addpic.html'
+    model = Photo
+    fields = ['photo', 'game']
+    login_url = '/login/'
+    group_required = [u"coach", u"staff", u"fan", u"reporter"]
+
+    def form_valid(self, form):
+        self.object = form.save(commit=False)  # Not hit database
+        self.object.uploaded_by = self.request.user  # Update user
+        self.object.upload_date = datetime.now()  # Update post_date
+        self.object.save()  # And finally save your object to database.
+        return HttpResponseRedirect(self.get_success_url())
+
+    def get_initial(self):
+        initial = super(AddPic, self).get_initial()
+        q = self.request.GET.get('game')
+        initial ['game'] = Schedule.objects.get(match=q)
+        return initial
+
+    def get_success_url(self):
+        q = self.request.GET.get('game')
+        url = ('/gameview/?match=%s' % q)
+        return url
+
+class MyPic(ListView):
+    #template_name: 'mypic.html'
+    model = Photo
+    login_url = '/login/'
+    group_required = [u"coach", u"staff", u"fan", u"reporter"]
+
+    def get_context_data(self, **kwargs):
+        context = super(MyPic, self).get_context_data(**kwargs)
+        user = self.request.user
+        context ['pic'] = Photo.objects.filter(uploaded_by=user)
+        return context
+
+class DeletePic(DeleteView):
+    template_name = 'photo_confirm_delete.html'
+    model = Photo
+    success_url = reverse_lazy('MyPic')

@@ -14,7 +14,7 @@
 
 <tr>
 {% for school_list in school_list %}
-<h2><th>{{ school_list.team_name }}</th> <td>{{ school_list.sport_id }}</td> <td>{{ school_list.win }}</td> <td>{{ school_list.loss }}</td></h2>
+<h2><th>{{ school_list }}</th> <td>{{ school_list.sport_id }}</td> <td>{{ school_list.win }}</td> <td>{{ school_list.loss }}</td><td>{{ school_list.tie }}</td></h2>
 </tr>
 {% endfor %}
 </table>

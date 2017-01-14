@@ -1,5 +1,5 @@
 from django.forms import ModelForm
-from teamsports.models import Teams, Schedule, Sports, School
+from teamsports.models import Teams, Schedule, Sports, School, Photo
 from django import forms
 from django.forms import widgets, HiddenInput
 from django.shortcuts import get_object_or_404, HttpResponseRedirect, render, redirect
@@ -46,4 +46,11 @@ class SelectSchool(ModelForm):
     class Meta:
         model = School
         fields = ['school']
+
+class AddPicture(ModelForm):
+    picture = forms.ImageField()
+
+    class Meta:
+        model = Photo
+        fields = ['photo', 'team_photo', 'game']
 

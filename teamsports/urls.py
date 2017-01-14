@@ -1,5 +1,6 @@
 from django.conf.urls import url
 
+
 from . import views
 
 urlpatterns = [
@@ -19,5 +20,9 @@ urlpatterns = [
     url(r'^reportscore/$', views.ScoreReport.as_view(template_name='reportscore.html'), name='ScoreReport'),
     url(r'^coachview/$', views.CoachView.as_view(template_name='coachview.html'), name='CoachView'),
     url(r'^editteam/$', views.EditTeam.as_view(template_name='editteam.html'), name='EditTeam'),
-    url(r'^home/$', views.HomeView.as_view(template_name='homeview.html'), name='HomeView')
+    url(r'^home/$', views.HomeView.as_view(template_name='homeview.html'), name='HomeView'),
+    #adding pictures
+    url(r'^addpic/$', views.AddPic.as_view(template_name='addpic.html'), name='AddPic'),
+    url(r'^mypic/$', views.MyPic.as_view(template_name='mypic.html'), name='MyPic'),
+    url(r'^(?P<pk>[0-9]+)/delete/$',views.DeletePic.as_view(),name='DeletePic'),
 ]
