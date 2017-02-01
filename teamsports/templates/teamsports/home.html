@@ -2,32 +2,28 @@
 
 {% block content %}
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+{% load static %}
+<div class="w3-container">
+<div class="w3-row">
+  <div class="w3-col w3-half w3-center">
+    <h1>Winter Sports</h1>
+    {% for sport in sport_list %}
+    <div class="w3-card card-12">
+        <div class="w3-display-container w3-text-white">
+          <a href="/sportview/?sport={{sport.sport}}"><img src="{{sport.pic.url}}" style="width:100%"></a>
+             <div class="w3-display-bottomright w3-container"><h1>{{sport.sport_name}}</h1></div>
+        </div>
+    </div>
+    <br><br>
+    {% endfor %}
+ </div>
+ <div class="w3-col w3-half  w3-center">
+    <h1>FEED GOES HERE</h1>
+ </div>
+</div>
+</div>
+<!--Import jQuery before materialize.js-->
+        <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.7/js/materialize.min.js"></script>
 
-<body>
-<h1><a href="/home/">I'm a fan!</a></h1>
-<h1><a href="/coachview/">I'm a coach/reporter</a></h1>
-
-<h3>Last 5 Games</h3>
-<table border="3" width="700" height="100" cellpadding="5" cellspacing="5">
-   <tr>
-{% for game in last|slice:"5" %}
-       <p> <th> <h2><a href="gameview/?match={{game.match}}">{{ game.match_date }}</h2></a></p>
-        <p><h2><a href="/teamview/?team_name={{ game.home.team }}">{{ game.home}}</a>  {{ game.home_score }} </h2></p>
-       <p><h3> VS </h3></p>
-        <p><a href="/teamview/?team_name={{ game.away.team }}">{{ game.away}}</a> {{ game.away_score }}</th></p>
-        </th>
-    </tr>
-{% endfor %}
-</table>
-<h3>Next 5 games: (change this)</h3>
-<table border="3" width="400" height="100" cellpadding="5" cellspacing="5">
-
-{% for game in games|slice:"5" %}
-       <p> <th><h2> <a href="gameview/?match={{game.match}}">{{ game.match_date }}</h2></p>
-       <p><h2><a href="/teamview/?team_name={{ game.home }}">{{ game.home}}</a></h2></p> <p><h2>VS</h2></p>
-       <p><h2><a href="/teamview/?team_name={{ game.away }}">{{ game.away}}</a> </th>
-    </tr>
-{% endfor %}
-    </table>
-</body>
 {% endblock %}

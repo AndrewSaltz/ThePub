@@ -1,73 +1,72 @@
-<!doctype html>
+{% load static %}
 <!DOCTYPE html>
-<html>
-<head>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<style>
-body {margin: 0;}
+  <html>
+  <head>
+      <title>The Pub</title>
+      <meta name= "description" content = "The #1 Source for all thing in the Philly Public League, by the Paul Robeson High School for Human Services" />
 
-ul.topnav {
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
-    background-color: #333;
-}
+        <link rel="stylesheet" href="http://www.w3schools.com/lib/w3.css">
 
-ul.topnav li {float: left;}
+      <!--Let browser know website is optimized for mobile-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
-ul.topnav li a {
-    display: block;
-    color: white;
-    text-align: center;
-    padding: 14px 16px;
-    text-decoration: none;
-}
+    <style>
 
-ul.topnav li a:hover:not(.active) {background-color: #111;}
+    </style>
 
-ul.topnav li a.active {background-color: #4CAF50;}
+    </head>
 
-ul.topnav li.right {float: right;}
-
-@media screen and (max-width: 600px){
-    ul.topnav li.right,
-    ul.topnav li {float: none;}
-}
-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-html {
-  font-family: sans-serif; /* 1 */
-  -ms-text-size-adjust: 100%; /* 2 */
-  -webkit-text-size-adjust: 100%; /* 2 */
-}
-
-/**
- * Remove default margin.
- */
-
-body {
-  margin: 0;
-}
-</style>
-</head>
 <body>
-
-<ul class="topnav" id="myTopnav">
-    <li class="icon">
-    <a href="javascript:void(0);" onclick="myFunction()">&#9776;</a>
-  <li><a href="/">Home</a></li>
-  <li><a href="/gameview/">Games</a></li>
-  <li><a href="/teamview/">Teams</a></li>
-  <li><a href="/about/">About</a></li>
-  <li style="float:right"><a class="active" href="/login/">About</a></li>
+<div class="w3-container w3-top">
+<ul class="w3-navbar w3-black">
+    <li class="w3-hide-medium w3-hide-large w3-black w3-top w3-left">
+    <a href="javascript:void(0);" onclick="myFunction()">☰</a>
   </li>
+  <li class="w3-hide-small"><a href="/">Home</a></li>
+       <li class="w3-dropdown-hover w3-hide-small">
+      <a  class="w3-hide-small" href="#">Search By</a>
+  <div class="w3-dropdown-content w3-white w3-card-4 w3-hide-small">
+      <a href="#">Team</a>
+      <a href="#">Sport</a>
+      <a href="#">School</a>
+    </div>
+    <li class="w3-hide-small"><a href="#">About</a></li>
+  <li class="w3-hide-small"><input type="text" class="w3-input" placeholder="Search.."></li>
+  <li class="w3-hide-small"><button class="w3-btn w3-green">Go</button></li>
+  <li class="w3-right w3-hide-small"><a class="w3-green" href="/login/">Login</a></li>
+  </ul>
+</div>
+<div id="demo" class="w3-hide w3-hide-large w3-hide-medium">
+  <ul class="w3-navbar w3-left-align w3-black">
+      <br><br>
+    <li class="w3-green"><a href="/login/">Login</a></li>
+      <li><a href="#">Teams</a></li>
+      <li><a href="#">Sports</a></li>
+      <li><a href="#">Schools</a></li>
+    <li><a href="#">About</a></li>
+  </ul>
+     </div>
+    <br><br>
+{% block content %}
+{% endblock %}
 
-</ul>
-      <p class="padding">
 
-{% block content %}{% endblock %}
+  <!--Import jQuery before materialize.js-->
+<script
+  src="https://code.jquery.com/jquery-3.1.1.min.js"
+  integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+  crossorigin="anonymous"></script>
+<script>
+function myFunction() {
+    var x = document.getElementById("demo");
+    if (x.className.indexOf("w3-show") == -1) {
+        x.className += " w3-show";
+    } else {
+        x.className = x.className.replace(" w3-show", "");
+    }
+}
+</script>
+
+
 </body>
 </html>

@@ -5,6 +5,7 @@ from django.contrib import admin
 from django.forms import ModelForm
 from django import forms
 from versatileimagefield.fields import VersatileImageField
+from datetime import datetime
 
 # Create your models here.
 ## class ScheduleAdmin(admin.ModelAdmin)
@@ -13,6 +14,7 @@ class Sports(models.Model):
     sport = models.AutoField(primary_key=True)
     sport_name = models.CharField(max_length=225, blank=True, null=True)
     is_current = models.BooleanField(default=False)
+    pic = VersatileImageField(upload_to='sportpics/', blank=True)
 
     class Meta:
         managed = True
@@ -20,6 +22,8 @@ class Sports(models.Model):
     def __str__(self):
         return self.sport_name
 
+class SportAdmin(admin.ModelAdmin):
+    list_display = ('sport_name', 'is_current', 'pic')
 
 class School(models.Model):
     school = models.AutoField(primary_key=True)
@@ -39,6 +43,13 @@ class Teams(models.Model):
     win = models.IntegerField(blank=True, null=True, default=0)
     loss = models.IntegerField(blank=True, null=True, default=0)
     tie = models.IntegerField(blank=True, null=True, default=0)
+    pic = VersatileImageField(upload_to='teampics/', blank=True, default='/teampics/emptyfield.jpg')
+
+    def next_game(self):
+        dt=datetime.now()
+        h = Schedule(home=self.team).filter(match_date__gt=dt).order_by("match_date")
+        a = Schedule(away=self.team).filter(match_date__gt=dt).order_by("match_date")
+        return 'Next home game %s, Next away game %s' % (h, a)
 
     class Meta:
         db_table = 'teams'
@@ -46,6 +57,8 @@ class Teams(models.Model):
         return '%s %s' % (self.school, self.sport)
 # changed, see  team_name
 
+class TeamsAdmin(admin.ModelAdmin):
+    list_display = ('team', 'sport', 'division', 'school', 'win', 'loss', 'tie', 'pic')
 
 class Schedule(models.Model):
     match = models.AutoField(primary_key=True)
@@ -54,9 +67,12 @@ class Schedule(models.Model):
     away = models.ForeignKey(Teams, related_name='away_set', blank=True, null=True)
     home_score = models.IntegerField(blank=True, null=True, default=None)
     away_score = models.IntegerField(blank=True, null=True, default=None)
+
+
     class Meta:
         managed = True
         db_table = 'schedule'
+
     def __str__(self):
         return '%s at %s , %s' % (self.away, self.home, self.match_date)
 
@@ -70,6 +86,7 @@ class Photo(models.Model):
     upload_date = models.DateTimeField(auto_now_add=True)
     photo = VersatileImageField(upload_to='gamepics/', blank=True)
     uploaded_by = models.ForeignKey('auth.User', null=True)
+
 
 class GameNotes(models.Model):
     game = models.ForeignKey(Schedule, blank=True, null=True)

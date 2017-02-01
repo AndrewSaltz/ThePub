@@ -15,9 +15,12 @@ from braces.views import GroupRequiredMixin
 
 def home(request):
     now = datetime.now()
+    #Not using this, but save for later
     games = Schedule.objects.filter(match_date__gt=now).order_by('match_date')
     last = Schedule.objects.filter(match_date__lte=now).order_by('-match_date')
-    return render(request, 'teamsports/home.html', {'games' : games, 'last' : last})
+    # All Sports
+    sport_list = Sports.objects.filter(is_current=True)
+    return render(request, 'teamsports/home.html', {'games' : games, 'last' : last, 'sport_list' : sport_list })
 
 class StandingsView(FormView):
     form_class = SelectTeam
@@ -42,6 +45,7 @@ class TeamView(generic.TemplateView):
         context['team'] = Teams.objects.get(team=q)
         game_list=Schedule.objects.filter(Q(home=q) | Q(away=q)).order_by('match_date').select_related('home', 'away')
         context['game_list']=game_list
+        context['pictures']=Photo.objects.all()
         return context
 
 class MatchSelect(FormView):
@@ -113,7 +117,6 @@ class SchoolView(generic.TemplateView):
         q = self.request.GET.get('school')
         context['school'] = School.objects.get(school=q)
         context['school_list'] = Teams.objects.filter(school=q)
-        #Need to add Next Game function...maybe in models?
         return context
 
 class CoachView(GroupRequiredMixin, generic.TemplateView):

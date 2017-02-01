@@ -1,0 +1,365 @@
+[33mcommit 5a1e3d997cf7b6b58c929118c91ac28ca786c4e1[m
+Author: Andrew Saltz <amsaltz@gmail.com>
+Date:   Sat Dec 31 23:17:44 2016 +0000
+
+    Fixed Home Screen, Scorecheck Script Created
+
+[1mdiff --git a/check_wins.py b/check_wins.py[m
+[1mnew file mode 100644[m
+[1mindex 0000000..0c01f0d[m
+[1m--- /dev/null[m
+[1m+++ b/check_wins.py[m
+[36m@@ -0,0 +1,33 @@[m
+[32m+[m[32m#Get models[m
+[32m+[m[32mfrom teamsports.models import Teams, Schedule[m
+[32m+[m[32m#Get F[m
+[32m+[m[32mfrom django.db.models import F[m
+[32m+[m
+[32m+[m[32m#Make all wins, losses, ties at zero[m
+[32m+[m[32mTeams.objects.all().update(loss=0, win=0, tie=0)[m
+[32m+[m
+[32m+[m[32m#The logic, practice[m
+[32m+[m[32mfor games in Schedule.objects.all():[m
+[32m+[m[32m    if games.home_score > games.away_score:[m
+[32m+[m[32m        winner = Teams.objects.get(pk=games.home.team)[m
+[32m+[m[32m        loser = Teams.objects.get(pk=games.away.team)[m
+[32m+[m[32m        winner.win = F('win') + 1[m
+[32m+[m[32m        loser.loss = F('loss') +1[m
+[32m+[m[32m        winner.save()[m
+[32m+[m[32m        loser.save()[m
+[32m+[m[32m    elif games.home_score < games.away_score:[m
+[32m+[m[32m        winner = Teams.objects.get(pk=games.away.team)[m
+[32m+[m[32m        loser = Teams.objects.get(pk=games.home.team)[m
+[32m+[m[32m        winner.win = F('win') + 1[m
+[32m+[m[32m        loser.loss = F('loss') +1[m
+[32m+[m[32m        winner.save()[m
+[32m+[m[32m        loser.save()[m
+[32m+[m[32m    elif games.home_score == games.away_score:[m
+[32m+[m[32m        home_tie = Teams.objects.get(pk=games.away.team)[m
+[32m+[m[32m        away_tie = Teams.objects.get(pk=games.home.team)[m
+[32m+[m[32m        home_tie.tie = F('tie') + 1[m
+[32m+[m[32m        away_tie.tie = F('tie') +1[m
+[32m+[m[32m        home_tie.save()[m
+[32m+[m[32m        away_tie.save()[m
+[32m+[m
+[32m+[m[32mprint ("All Done")[m
+[1mdiff --git a/teamsports/admin.py b/teamsports/admin.py[m
+[1mindex ef7a63f..ac3ec93 100644[m
+[1m--- a/teamsports/admin.py[m
+[1m+++ b/teamsports/admin.py[m
+[36m@@ -1,9 +1,9 @@[m
+ from django.contrib import admin[m
+ [m
+ # Register your models here.[m
+[31m-from .models import School, Teams, Schedule, ScheduleAdmin, SchoolAdmin, TeamsAdmin[m
+[32m+[m[32mfrom .models import School, Teams, Schedule, ScheduleAdmin, TeamsAdmin[m
+ from .models import Sports[m
+[31m-admin.site.register(School, SchoolAdmin)[m
+[32m+[m[32madmin.site.register(School)[m
+ admin.site.register(Sports)[m
+ admin.site.register(Teams, TeamsAdmin)[m
+ admin.site.register(Schedule, ScheduleAdmin)[m
+[1mdiff --git a/teamsports/forms.py b/teamsports/forms.py[m
+[1mindex 94311b4..3656828 100644[m
+[1m--- a/teamsports/forms.py[m
+[1m+++ b/teamsports/forms.py[m
+[36m@@ -47,10 +47,3 @@[m [mclass SelectSchool(ModelForm):[m
+         model = School[m
+         fields = ['school'][m
+ [m
+[31m-[m
+[31m-#Note sure we need this with Updateview[m
+[31m-class ReportScore(ModelForm):[m
+[31m-    class Meta:[m
+[31m-        model = Schedule[m
+[31m-        fields = ['match_date', 'home_score', 'away_score'][m
+[31m-[m
+[1mdiff --git a/teamsports/models.py b/teamsports/models.py[m
+[1mindex bc29c01..f9a25fe 100644[m
+[1m--- a/teamsports/models.py[m
+[1m+++ b/teamsports/models.py[m
+[36m@@ -29,8 +29,10 @@[m [mclass School(models.Model):[m
+     def __str__(self):[m
+         return self.school_name[m
+ [m
+[31m-class SchoolAdmin(admin.ModelAdmin):[m
+[31m-    fields = ('school_name')[m
+[32m+[m[32m#class SchoolAdmin(admin.ModelAdmin):[m
+[32m+[m[32m #   model = School[m
+[32m+[m[32m  #  list_display = ('school_name')[m
+[32m+[m[32m  #Didn't need this and was screwing with the admin[m
+ [m
+ class Teams(models.Model):[m
+     team = models.AutoField(primary_key=True)[m
+[36m@@ -46,7 +48,7 @@[m [mclass Teams(models.Model):[m
+         managed = True[m
+         db_table = 'teams'[m
+     def __str__(self):[m
+[31m-        return '%s %s'% (self.team_name, self.sport_id)[m
+[32m+[m[32m        return '%s' % (self.team_name)[m
+ [m
+ class TeamsAdmin(admin.ModelAdmin):[m
+     model = Teams[m
+[1mdiff --git a/teamsports/templates/base.html b/teamsports/templates/base.html[m
+[1mindex ca99eb4..4da0ad9 100644[m
+[1m--- a/teamsports/templates/base.html[m
+[1m+++ b/teamsports/templates/base.html[m
+[36m@@ -3,11 +3,9 @@[m
+ <body>[m
+ <h1 style="text-align: center;"><span style="background-color: #0000ff; color: #ffffff;">The Pub</a></span></h1>[m
+ <div id="menu" align="middle" >[m
+[31m-<a href="/">HOME</a> |[m
+[31m-<a href="/standings/">TEAMS</a> |[m
+[31m-<a href="/matchselect/">GAMES</a>|[m
+[31m-<a href="/selectsport/">SPORTS</a>|[m
+[31m-<a href="/selectschool/">SCHOOL</a>[m
+[32m+[m[32m<a href="/home/">Home</a> |[m
+[32m+[m[32m<a href="/about/">What is this?</a>|[m
+[32m+[m[32m<a href="/coachview/">Log In</a>[m
+ </div>[m
+ [m
+ [m
+[1mdiff --git a/teamsports/templates/homeview.html b/teamsports/templates/homeview.html[m
+[1mnew file mode 100644[m
+[1mindex 0000000..d448a7a[m
+[1m--- /dev/null[m
+[1m+++ b/teamsports/templates/homeview.html[m
+[36m@@ -0,0 +1,36 @@[m
+[32m+[m[32m{% extends 'base.html' %}[m
+[32m+[m
+[32m+[m[32m{% block content %}[m
+[32m+[m[32m<body>[m
+[32m+[m
+[32m+[m[32m    <h1>*Your* Public League!</h1>[m
+[32m+[m
+[32m+[m[32m<h2>Select a Team</h2>[m
+[32m+[m[32m<form action= {% url 'TeamView' %} method="GET">[m
+[32m+[m[32m    {{ select_team_form }}[m
+[32m+[m[32m    <input type="submit" value="Submit" />[m
+[32m+[m[32m    {{ form.errors }}[m
+[32m+[m[32m</form>[m
+[32m+[m
+[32m+[m[32m<h2>Select a Game</h2>[m
+[32m+[m[32m<form action= {% url 'GameView' %} method="GET">[m
+[32m+[m[32m    {{ select_match_form }}[m
+[32m+[m[32m    <input type="submit" value="Submit" />[m
+[32m+[m[32m    {{ form.errors }}[m
+[32m+[m[32m</form>[m
+[32m+[m
+[32m+[m[32m<h2>Select a Sport</h2>[m
+[32m+[m[32m<form action= {% url 'SportView' %} method="GET">[m
+[32m+[m[32m    {{ select_sport_form }}[m
+[32m+[m[32m    <input type="submit" value="Submit" />[m
+[32m+[m[32m    {{ form.errors }}[m
+[32m+[m[32m</form>[m
+[32m+[m
+[32m+[m[32m<h2>Select a School</h2>[m
+[32m+[m[32m<form action= {% url 'SchoolView' %} method="GET">[m
+[32m+[m[32m    {{ select_school_form }}[m
+[32m+[m[32m    <input type="submit" value="Submit" />[m
+[32m+[m[32m    {{ form.errors }}[m
+[32m+[m[32m</form>[m
+[32m+[m[32m</body>[m
+[32m+[m[32m{% endblock %}[m
+[1mdiff --git a/teamsports/templates/matchview.html b/teamsports/templates/matchview.html[m
+[1mindex 5292397..0c149af 100644[m
+[1m--- a/teamsports/templates/matchview.html[m
+[1m+++ b/teamsports/templates/matchview.html[m
+[36m@@ -16,5 +16,6 @@[m
+        <p>date <th> {{ game.match_date }}</th> <th> <a href="/teamview/?team_name={{ game.home }}">{{ game.home}}</a> </th> <th> {{ game.home_score }}</th> <th> <a href="/teamview/?team_name={{ game.away }}">{{ game.away}}</a> </th> <th> {{ game.away_score }}</th></p>[m
+     {% endif %}[m
+     </tr>[m
+[31m-    <li><a href="/matchselect/">Pick another, ya jabroni</a></li>[m
+[32m+[m[32m    </table>[m
+[32m+[m[32m    <li><a href="/home/">Pick another, ya jabroni</a></li>[m
+ {% endblock %}[m
+\ No newline at end of file[m
+[1mdiff --git a/teamsports/templates/schoolview.html b/teamsports/templates/schoolview.html[m
+[1mindex 9d79bc8..88e3f0e 100644[m
+[1m--- a/teamsports/templates/schoolview.html[m
+[1m+++ b/teamsports/templates/schoolview.html[m
+[36m@@ -20,6 +20,6 @@[m
+ </table>[m
+ [m
+ [m
+[31m-    <li><a href="/selectschool/">Pick another, ya jabroni</a></li>[m
+[32m+[m[32m    <li><a href="/home/">Pick another, ya jabroni</a></li>[m
+ [m
+ {% endblock %}[m
+\ No newline at end of file[m
+[1mdiff --git a/teamsports/templates/sportview.html b/teamsports/templates/sportview.html[m
+[1mindex ff83c0a..ec0a47c 100644[m
+[1m--- a/teamsports/templates/sportview.html[m
+[1m+++ b/teamsports/templates/sportview.html[m
+[36m@@ -7,19 +7,18 @@[m
+ <tr>[m
+ <th>Team Name</th>[m
+ <th>Division</th>[m
+[31m-<th>School</th>[m
+ <th>Wins</th>[m
+ <th>Losses</th>[m
+ <th>Ties</th>[m
+ </tr>[m
+ <tr>[m
+ {% for sport in sport %}[m
+[31m-    <p><th><a href="/teamview/?team_name={{ sport.team }}">{{ sport.team_name }}</a></th> <th>{{ sport.division }}</th>  <th><a href="/schoolview/?school={{ sport.school_id }}">{{ sport.school }}</a></th> <th>{{ sport.win }} </th> <th>{{ sport.loss }} </th> <th>{{ sport.tie }} </th></p>[m
+[32m+[m[32m    <p><th><a href="/teamview/?team_name={{ sport.team }}">{{ sport.team_name }}</a></th> <th>{{ sport.division }}</th>  <th>{{ sport.win }} </th> <th>{{ sport.loss }} </th> <th>{{ sport.tie }} </th></p>[m
+ </tr>[m
+ [m
+ {% endfor %}[m
+ </table>[m
+ [m
+[31m-    <li><a href="/selectsport/">Pick another, ya jabroni</a></li>[m
+[32m+[m[32m    <li><a href="/home/">Pick another, ya jabroni</a></li>[m
+ [m
+ {% endblock %}[m
+[1mdiff --git a/teamsports/templates/teamsports/home.html b/teamsports/templates/teamsports/home.html[m
+[1mindex 2f33962..9a436c0 100644[m
+[1m--- a/teamsports/templates/teamsports/home.html[m
+[1m+++ b/teamsports/templates/teamsports/home.html[m
+[36m@@ -1,14 +1,10 @@[m
+ {% extends 'base.html' %}[m
+ [m
+ {% block content %}[m
+[32m+[m[32m<body>[m
+[32m+[m[32m<h1><a href="/home/">I'm a fan!</a></h1>[m
+[32m+[m[32m<h1><a href="/coachview/">I'm a coach/reporter</a></h1>[m
+ [m
+[31m-    <li><a href="/standings/">Select a Team!</a></li>[m
+[31m-    <li><a href="/matchselect/">Select a Game!</a></li>[m
+[31m-    <li><a href="/selectsport/">Select a Sport!</a></li>[m
+[31m-    <li><a href="/selectschool/">Select a School!</a></li>[m
+[31m-[m
+[31m-    <li><a href="coachview/">I'm a coach</a></li>[m
+[31m-[m
+[31m-[m
+[32m+[m[32m</body>[m
+ [m
+ {% endblock %}[m
+\ No newline at end of file[m
+[1mdiff --git a/teamsports/templates/teamview.html b/teamsports/templates/teamview.html[m
+[1mindex 5e00cb6..ac583b5 100644[m
+[1m--- a/teamsports/templates/teamview.html[m
+[1m+++ b/teamsports/templates/teamview.html[m
+[36m@@ -31,8 +31,7 @@[m
+         </tr>[m
+         </table>[m
+ [m
+[31m-[m
+     <li><a href="/standings/">Pick another, ya jabroni</a></li>[m
+[31m-[m
+[32m+[m[32m    <p>Upcoming Games</p>[m
+ [m
+ {% endblock %}[m
+\ No newline at end of file[m
+[1mdiff --git a/teamsports/urls.py b/teamsports/urls.py[m
+[1mindex a4656cf..9a47a87 100644[m
+[1m--- a/teamsports/urls.py[m
+[1m+++ b/teamsports/urls.py[m
+[36m@@ -10,13 +10,14 @@[m [murlpatterns = [[m
+     url(r'^matchselect/$', views.MatchSelect.as_view(template_name ='selectmatch.html'), name='MatchSelect'),[m
+     url(r'^gameview/$', views.GameView.as_view(template_name='matchview.html'), name='GameView'),[m
+     # selecting a sport[m
+[31m-    url(r'^selectsport/$', views.SelectSport.as_view(template_name='selectsport.html'), name='SelectSport'),[m
+[32m+[m[32m    #url(r'^selectsport/$', views.SelectSport.as_view(template_name='selectsport.html'), name='SelectSport'),[m
+     url(r'^sportview/$', views.SportView.as_view(template_name='sportview.html'), name='SportView'),[m
+     # selecting a school[m
+[31m-    url(r'^selectschool/$', views.SelectSchool.as_view(template_name='selectschool.html'), name='SelectSchool'),[m
+[32m+[m[32m    #url(r'^selectschool/$', views.SelectSchool.as_view(template_name='selectschool.html'), name='SelectSchool'),[m
+     url(r'^schoolview/$', views.SchoolView.as_view(template_name='schoolview.html'), name='SchoolView'),[m
+     #update scores[m
+     url(r'^reportscore/$', views.ScoreReport.as_view(template_name='reportscore.html'), name='ScoreReport'),[m
+     url(r'^coachview/$', views.CoachView.as_view(template_name='coachview.html'), name='CoachView'),[m
+[31m-    url(r'^editteam/$', views.EditTeam.as_view(template_name='editteam.html'), name='EditTeam')[m
+[32m+[m[32m    url(r'^editteam/$', views.EditTeam.as_view(template_name='editteam.html'), name='EditTeam'),[m
+[32m+[m[32m    url(r'^home/$', views.HomeView.as_view(template_name='homeview.html'), name='HomeView')[m
+ ][m
+\ No newline at end of file[m
+[1mdiff --git a/teamsports/views.py b/teamsports/views.py[m
+[1mindex 50b0288..620cac6 100644[m
+[1m--- a/teamsports/views.py[m
+[1m+++ b/teamsports/views.py[m
+[36m@@ -4,12 +4,12 @@[m [mfrom django.core.urlresolvers import reverse_lazy[m
+ from django.views.generic.edit import FormView, UpdateView[m
+ from teamsports.models import School, Teams, Schedule, Sports[m
+ from django.shortcuts import get_object_or_404, HttpResponseRedirect, render, redirect[m
+[31m-from teamsports.forms import SelectTeam, SelectMatch, SelectSport, SelectSchool, ReportScore[m
+[32m+[m[32mfrom teamsports.forms import SelectTeam, SelectMatch, SelectSport, SelectSchool[m
+ from django.db.models import Q[m
+[32m+[m[32mfrom django.views.generic import TemplateView[m
+ from django.views import generic[m
+ from django.contrib.auth.mixins import LoginRequiredMixin[m
+ [m
+[31m-[m
+ def home(request):[m
+     schools = School.objects.all()[m
+     return render(request, 'teamsports/home.html', {'schools' : schools})[m
+[36m@@ -60,7 +60,7 @@[m [mclass GameView(generic.TemplateView):[m
+         q = self.request.GET.get('match')[m
+         context['game'] = Schedule.objects.get(match=q)[m
+         return context[m
+[31m-[m
+[32m+[m[32m"""[m
+ class SelectSport(FormView):[m
+     form_class = SelectSport[m
+     template_name = 'selectsport.html'[m
+[36m@@ -73,18 +73,18 @@[m [mclass SelectSport(FormView):[m
+ [m
+     def form_invalid(self,form):[m
+         HttpResponse ("This didn't work")[m
+[32m+[m[32m"""[m
+ [m
+[31m-[m
+[31m-class SportView(generic.TemplateView):[m
+[32m+[m[32mclass SportView(TemplateView):[m
+     template_name = "sportview.html"[m
+ [m
+     def get_context_data(self, **kwargs):[m
+         context = super(SportView, self).get_context_data(**kwargs)[m
+         q = self.request.GET.get('sport')[m
+[31m-        context['sport'] = Teams.objects.filter(sport_id=q).order_by('win')[m
+[32m+[m[32m        context['sport'] = Teams.objects.filter(sport_id=q).order_by('-win')[m
+         context['sport_name'] = Sports.objects.get(sport=q)[m
+         return context[m
+[31m-[m
+[32m+[m[32m"""[m
+ class SelectSchool(FormView):[m
+     form_class = SelectSchool[m
+     template_name = 'selectsport.html'[m
+[36m@@ -97,7 +97,7 @@[m [mclass SelectSchool(FormView):[m
+ [m
+     def form_invalid(self,form):[m
+         HttpResponse ("This didn't work")[m
+[31m-[m
+[32m+[m[32m"""[m
+ class SchoolView(generic.TemplateView):[m
+     template_name = "schoolview.html"[m
+ [m
+[36m@@ -123,7 +123,6 @@[m [mclass CoachView(LoginRequiredMixin, generic.TemplateView):[m
+         context['match_form'] = match_form[m
+         return self.render_to_response(context)[m
+ [m
+[31m-[m
+ class ScoreReport(UpdateView):[m
+     template_name = 'reportscore.html'[m
+     model = Schedule[m
+[36m@@ -149,4 +148,19 @@[m [mclass EditTeam(UpdateView):[m
+         obj=Teams.objects.get(team=q)[m
+         return obj[m
+ [m
+[32m+[m[32mclass HomeView(generic.TemplateView):[m
+[32m+[m[32m    template_name = "homeview.html"[m
+[32m+[m
+[32m+[m[32m    def get(self, request, *args, **kwargs):[m
+[32m+[m[32m        context = super(HomeView, self).get_context_data(**kwargs)[m
+[32m+[m[32m        select_team_form = SelectTeam(self.request.GET or None)[m
+[32m+[m[32m        select_match_form = SelectMatch(self.request.GET or None)[m
+[32m+[m[32m        select_sport_form = SelectSport(self.request.GET or None)[m
+[32m+[m[32m        select_school_form = SelectSchool(self.request.GET or None)[m
+[32m+[m[32m        context = self.get_context_data(**kwargs)[m
+[32m+[m[32m        context ['select_team_form'] = select_team_form[m
+[32m+[m[32m        context ['select_match_form'] = select_match_form[m
+[32m+[m[32m        context ['select_sport_form'] = select_sport_form[m
+[32m+[m[32m        context ['select_school_form'] = select_school_form[m
+[32m+[m[32m        return self.render_to_response(context)[m
+ [m

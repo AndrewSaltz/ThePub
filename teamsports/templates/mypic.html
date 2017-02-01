@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h1> Hello {{ user.get_username }}</h1>
+
+<h2> Your Pictures </h2>
+
+{% for pic in pic %}
+    <img src="{{pic.photo.thumbnail.200x200}}" />
+    <p><a href="{% url 'DeletePic' pic.pk %}">Delete</a></p>
+{% endfor %}
+
+{% endblock %}
