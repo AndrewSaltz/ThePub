@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="w3-container w3-row-padding">
+    <div class="w3-card w3-half">
+        <header class="w3-container w3-blue">
+            <h1>Create Your Profile TESt</h1>
+        </header>
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+        <div class="w3-container">
+            {{ form.team.errors }}
+            <label class="w3-label" for="{{ form.team.id_for_label }}"><b>Is there one team you follow?:</b></label>
+            {{ form.team }}
+        </div>
+        <br>
+        <div class="fieldWrapper">
+            {{ form.sport.errors }}
+            <label for="{{ form.team.id_for_label }}">Is there one sport you love?:</label>
+            {{ form.sport }}
+        </div>
+        <div class="fieldWrapper">
+            {{ form.pic.errors }}
+            <label for="{{ form.team.id_for_label }}">You look good today. Add a profile picture:</label>
+            {{ form.pic }}
+        </div>
+        <input type="submit" value="Save" />
+    </div>
+    <div class="w3-card w3-half">
+        <header class="w3-container w3-blue">
+            <h1>What account do I need?</h1>
+        </header>
+        <p class="w3-text-blue"><h4>Types of Accounts</h4></p>
+        <p class="w3-large"><b>Fan</b></p>
+        <p><span class="w3-text-orange w3-large"><b>Fans</b></span> are the default account. Fans are able to <span class="w3-text-orange"><b>post and delete pictures</b></span>. Fans love the game and want to share their team's success.
+        <span class="w3-large w3-blue w3-text-orange w3-text-shadow"><b>Sign up? You're a fan!</b></span></p>
+        <p class="w3-large"><b>Coach</b></p>
+        <p><span class="w3-text-orange w3-large"><b>Coaches</b></span> are reporters connected to a team. They can <span class="w3-text-orange"><b>report scores, add game notes, post and delete pictures</b></span> in addition to <span class="w3-text-orange"><b>managing their team page</b></span>
+        Coaches also have special access to our Admin team for any problems. While we would prefer that the actual coach keep the "Coach" account, we welcome responsible student managers.
+        If you believe you should have a coach account, please click the "CONTACT" button below</p>
+        <p><span class="w3-large"><b>Reporter</b></span></p>
+        <p><span class="w3-text-orange w3-large"><b>Reporters</b></span> are fans of the public league. They are reliable reporters, allowed to <span class="w3-text-orange"><b>report scores,
+        add game notes, and post pictures</b></span>. </p>
+    </div>
+</div>
+{% endblock %}

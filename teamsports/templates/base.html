@@ -5,8 +5,10 @@
       <title>The Pub</title>
       <meta name= "description" content = "The #1 Source for all thing in the Philly Public League, by the Paul Robeson High School for Human Services" />
 
+                <!-- CSS -->
         <link rel="stylesheet" href="http://www.w3schools.com/lib/w3.css">
-
+        <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+	    <link rel="stylesheet" type="text/css" href="/static/css/jquery.fancybox.min.css">
       <!--Let browser know website is optimized for mobile-->
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
@@ -17,53 +19,59 @@
     </head>
 
 <body>
-<div class="w3-container w3-top">
-<ul class="w3-navbar w3-black">
-    <li class="w3-hide-medium w3-hide-large w3-black w3-top w3-left">
-    <a href="javascript:void(0);" onclick="myFunction()">☰</a>
-  </li>
-  <li class="w3-hide-small"><a href="/">Home</a></li>
-       <li class="w3-dropdown-hover w3-hide-small">
-      <a  class="w3-hide-small" href="#">Search By</a>
-  <div class="w3-dropdown-content w3-white w3-card-4 w3-hide-small">
-      <a href="#">Team</a>
-      <a href="#">Sport</a>
-      <a href="#">School</a>
-    </div>
-    <li class="w3-hide-small"><a href="#">About</a></li>
-  <li class="w3-hide-small"><input type="text" class="w3-input" placeholder="Search.."></li>
-  <li class="w3-hide-small"><button class="w3-btn w3-green">Go</button></li>
-  <li class="w3-right w3-hide-small"><a class="w3-green" href="/login/">Login</a></li>
-  </ul>
-</div>
-<div id="demo" class="w3-hide w3-hide-large w3-hide-medium">
-  <ul class="w3-navbar w3-left-align w3-black">
-      <br><br>
-    <li class="w3-green"><a href="/login/">Login</a></li>
-      <li><a href="#">Teams</a></li>
-      <li><a href="#">Sports</a></li>
-      <li><a href="#">Schools</a></li>
-    <li><a href="#">About</a></li>
-  </ul>
-     </div>
+<nav class="w3-sidenav w3-black w3-card-2 w3-animate-left w3-xlarge" style="display:none" id="mySidenav">
+  <a href="javascript:void(0)" onclick="w3_close()"
+  class="w3-closenav w3-large">Close &times;</a>  <a href="#"></a>
+       {% if user.is_authenticated %}
+       <h4> Welcome {{user}} </h4>
+    <a class="w3-black" href="/coachview/"><i class="material-icons">loyalty</i> Your Homepage</a>
+    <a class="w3-black" href="#"><i class="material-icons">mode_edit</i> Report a Game</a>
+    <a class="w3-black" href="#"><i class="material-icons">camera_enhanced</i>Add Pictures</a>
+    <a class="w3-black" href="#"><i class="material-icons">error_outline</i> Contact Admins</a>
     <br><br>
+    <a class="w3-black" href="/"><i class="material-icons">home</i> The Pub</a>
+    <a class="w3-black w3-hide-small" href="/photostream/A/"><i class="material-icons ">camera</i> Photostream</a>
+    <a class="w3-black w3-hide-medium w3-hide-large w3-small" href="/"><i class="material-icons">camera</i> Photostream</a>
+    <a class="w3-black" href="#"><i class="material-icons">search</i> Search</a>
+    <a class="w3-black" href="#"><i class="material-icons">help</i> About/Help</a>
+    <a class="w3-black" href="/accounts/logout"><i class="material-icons">arrow_back</i> Log Out</a>
+        {% else %}
+    <a class="w3-black" href="/"><i class="material-icons">home</i> The Pub</a>
+    <a class="w3-black w3-hide-small" href="/photostream/A"><i class="material-icons">camera</i> Photostream</a>
+    <a class="w3-black w3-hide-medium w3-hide-large w3-medium" href="/"><i class="material-icons">camera</i> Photostream</a>
+    <a class="w3-black" href="#"><i class="material-icons">search</i> Search</a>
+    <a class="w3-black w3-hide-small" href="#"><i class="material-icons">help</i> About/Help</a>
+    <a class="w3-black w3-hide-medium w3-hide-large w3-medium" href="#"><i class="material-icons">help</i> About/Help</a>
+
+    <a class="w3-black" href="/accounts/login"><i class="material-icons">arrow_forward</i>Log In</a>
+
+
+        {% endif %}
+</nav>
+<header class="w3-container w3-blue">
+    <h1 class="w3-hide-small"><span class="w3-opennav w3-xlarge" onclick="w3_open()">&#9776;</span> The Pub: Philadelphia's Home for the Public League</h1>
+    <h1 class="w3-hide-large w3-hide-medium"><span class="w3-opennav w3-xlarge" onclick="w3_open()">&#9776;</span> The Pub</h1>
+    </header>
+    <br>
+<div class="w3-container">
 {% block content %}
 {% endblock %}
-
-
-  <!--Import jQuery before materialize.js-->
+</div>
+	<!-- JS -->
 <script
-  src="https://code.jquery.com/jquery-3.1.1.min.js"
-  integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
-  crossorigin="anonymous"></script>
+         src="https://code.jquery.com/jquery-3.1.1.min.js"
+         integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+        crossorigin="anonymous"></script>
+<script src="/static/js/jquery.fancybox.min.js"></script>
+<script type="text/javascript" src="//platform-api.sharethis.com/js/sharethis.js#property=58b599155de5690011398740&product=inline-share-buttons"></script>
 <script>
-function myFunction() {
-    var x = document.getElementById("demo");
-    if (x.className.indexOf("w3-show") == -1) {
-        x.className += " w3-show";
-    } else {
-        x.className = x.className.replace(" w3-show", "");
-    }
+function w3_open() {
+    document.getElementById("mySidenav").style.display = "block";
+    document.getElementById("mySidenav").style.width = "40%";
+
+}
+function w3_close() {
+    document.getElementById("mySidenav").style.display = "none";
 }
 </script>
 

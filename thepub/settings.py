@@ -40,9 +40,25 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'teamsports',
     'debug_toolbar',
+    'widget_tweaks',
     'versatileimagefield',
+    'django.contrib.sites',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth',
+    'allauth.socialaccount.providers.google',
+    'allauth.socialaccount.providers.facebook',
+    'allauth.socialaccount.providers.github',
+    'allauth.socialaccount.providers.twitter',
 
 ]
+SITE_ID = 2
+
+# AllAuth
+# ACCOUNT_SIGNUP_FORM_CLASS = 'teamsports.forms.AllauthSignupForm'
+LOGIN_REDIRECT_URL = '/coachview/'
+# SOCIALACCOUNT_ADAPTER = "teamsports.adapter.SocialAccountAdapter"
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -113,7 +129,14 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+AUTHENTICATION_BACKENDS = (
 
+    # Needed to login by username in Django admin, regardless of `allauth`
+    'django.contrib.auth.backends.ModelBackend',
+
+    # `allauth` specific authentication methods, such as login by e-mail
+    'allauth.account.auth_backends.AuthenticationBackend',
+)
 # Internationalization
 # https://docs.djangoproject.com/en/1.10/topics/i18n/
 
@@ -136,3 +159,8 @@ STATIC_URL = '/static/'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+EMAIL_BACKEND = "sgbackend.SendGridBackend"
+SENDGRID_API_KEY = "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"
+
+USE_TZ = True

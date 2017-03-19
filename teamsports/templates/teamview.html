@@ -7,7 +7,7 @@
         {% if team.pic == "" %}
        <p>Hey there, could you add a team picture?</p>
         {% else %}
-       <a href="/teamview/?team_name={{team.team}}"><img src={{team.pic.url}} style="width:50%"></a>
+       <a href="{% url 'TeamView' team.team %}"><img src={{team.pic.url}} style="width:50%"></a>
         {% endif %}
 </div>
 <div class="w3-container">
@@ -50,8 +50,8 @@
             <td>Tie</td>
             {% endif %}
         {% endif %}
-        <td><a class="w3-btn w3-green" href="/reportscore/?match={{game.match}}">Report</a></td>
-        <td><a class="w3-btn w3-blue" href="/gameview/?match={{game.match}}">See More</a></td>
+        <td><a class="w3-btn w3-green" href="{% url 'ScoreReport' game.match %}">Report</a></td>
+        <td><a class="w3-btn w3-blue" href="{% url 'GameView' game.match %}">See More</a></td>
         </tr>
         {% endfor %}
     </table>

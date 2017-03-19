@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+<head>
+    <meta property="og:title" content="Join the best company in the world!" />
+<meta property="og:url" content="{{recent.photo.url}}" />
+<meta property="og:image" content="{{recent.photo.url}}" />
+<meta property="og:description" content="Check out this picture by {{uploaded_by}}" />
+<meta property="og:site_name" content="The Pub Philly" />
+</head>
+{% block content %}
+
+<div class="w3-container w3-blue">
+    <h1>Photostream</h1>
+    <a class="w3-button w3-teal" href="/photostream/A">Recent Photos</a>
+    <a class="w3-button w3-organge" href="/photostream/B">Today's Photos</a>
+</div>
+<span class="pagination">
+    {% if request.path == "/photostream/A/" %}
+              <h1>Recent Photos</h1>
+<div class="w3-row">
+    {% for recent in recent_list %}
+            <div class="w3-quarter w3-margin">
+            <a href="{% url 'picture' recent.id %}" data-fancybox data-caption:"By {{recent.uploaded_by}}"> <img class="w3-image w3-border w3-hover-sepia" style="width:75%,height:75%" src="{{recent.photo.url}}"></a>
+                <div class="w3-container w3-blue">
+                    <p class="w3-small"><b>{{recent.game.home}}</b> vs <b>{{recent.game.away}}</b></p>
+                    <p class="w3-small">Uploaded by: <b>{{recent.uploaded_by}}</b></p>
+                    <p class="w3-small">{{recent.upload_date}}
+                {% if user.is_authenticated %}
+                    <a class="w3-orange w3-right" href="/photostream/A"><i class="material-icons">warning</i></a>
+                {% endif %}
+                </p></div>
+            </div>
+            {% endfor %}
+</div>
+    {% else %}
+                  <h1>Today's Photos</h1>
+ <div class="w3-row">
+    {% for pic in today %}
+            <div class="w3-quarter w3-margin">
+            <a href="{{pic.photo.url}}" data-fancybox data-caption:"By {{uploaded_by}}"> <img class="w3-image w3-border w3-hover-sepia" style="width:75%,height:75%" src="{{recent.photo.url}}"></a>
+                <div class="w3-container w3-blue">
+                    <p class="w3-small"><b>{{recent.game.home}}</b> vs <b>{{recent.game.away}}</b></p>
+                    <p class="w3-small">Uploaded by: <b>{{recent.uploaded_by}}</b></p>
+                    <p class="w3-small">{{recent.upload_date}}
+                {% if user.is_authenticated %}
+                    <a class="w3-orange w3-right" href="/photostream/A"><i class="material-icons">warning</i></a>
+                {% endif %}
+                </p></div>
+            </div>
+            {% endfor %}
+</div>
+</span>
+{% endif %}
+<script type="text/javascript">
+	$("[data-fancybox]").fancybox({
+		// Options will go here
+	});
+</script>
+
+{% endblock %}

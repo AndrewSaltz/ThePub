@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% block content %}
+<body>
+    <div="w3-container">
+        <div="w3-card-8 w3-half">
+            <header class="w3-blue">
+                <h2>Report a Picture as Inappropriate</h2>
+            </header>
+    <img class="w3-image w3-border" src="{{the_photo.photo.url}}">
+                <br>
+    <form action="" method="post">
+    {% csrf_token %}
+        {{ form.non_field_errors }}
+        <h6>Why are you reporting this picture?</h6>
+    <div class="fieldWrapper">
+        {{ form.reason.errors }}
+    <label for="{{ form.reason.id_for_label }}">Reason:</label>
+        {{ form.reason }}
+    </div>
+    <br>
+    <h6>What else would you like to tell us?</h6>
+    <div class="fieldWrapper">
+    {{ form.notes.errors }}
+        <label for="{{ form.notes.id_for_label }}">Other Notes:</label>
+    {{ form.notes }}
+    </div>
+    <h6>Would you like an email response?</h6>
+    <div class="fieldWrapper">
+        {{ form.email.errors }}
+        <label for="{{ form.email.id_for_label }}">Email subject:</label>
+        {{ form.email }}
+    </div>
+    <input type="submit" value="Submit" />
+        </form>
+        </div>
+        <div="w3-card-8 w3-rest w3-container">
+            <p><b>Is something wrong with this picture?</b></p>
+            <p>Here at The Pub Philly, we have zero tolerance for harrassment of any kind. We encourage users to report any pictures that violate our Terms of Service (Tos).</p>
+            <p>If you need something else, do not hesistate to reach out.</p>
+            <a href="#"><button class="w3-button w3-yellow">Contact Us</button></a>
+            <button onclick="document.getElementById('id01').style.display='block'" class="w3-button w3-blue">Terms of Service</button>
+            <div id="id01" class="w3-modal">
+                <div class="w3-modal-content w3-card-8 w3-animate-zoom" style="max-width:600px">
+                    <span onclick="document.getElementById('id01').style.display='none'" class="w3-closebtn w3-hover-red w3-container w3-padding-8 w3-display-topright" title="Close Modal">&times;</span>
+                    <h2>Terms of Service</h2>
+                    <p>Write something, bro</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+{% endblock %}

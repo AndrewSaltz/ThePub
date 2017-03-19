@@ -10,8 +10,8 @@
     {% for sport in sport_list %}
     <div class="w3-card card-12">
         <div class="w3-display-container w3-text-white">
-          <a href="/sportview/?sport={{sport.sport}}"><img src="{{sport.pic.url}}" style="width:100%"></a>
-             <div class="w3-display-bottomright w3-container"><h1>{{sport.sport_name}}</h1></div>
+          <a href="{% url 'SportView' sport.sport %}"><img src="{{sport.pic.url}}" style="width:100%"></a>
+             <div class="w3-display-bottomright w3-grey w3-text-white w3-container"><h1>{{sport.sport_name}}</h1></div>
         </div>
     </div>
     <br><br>
@@ -22,7 +22,6 @@
  </div>
 </div>
 </div>
-<!--Import jQuery before materialize.js-->
         <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.7/js/materialize.min.js"></script>
 

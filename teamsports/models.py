@@ -6,6 +6,10 @@ from django.forms import ModelForm
 from django import forms
 from versatileimagefield.fields import VersatileImageField
 from datetime import datetime
+from django.contrib.auth.models import User
+from django.urls import reverse
+
+
 
 # Create your models here.
 ## class ScheduleAdmin(admin.ModelAdmin)
@@ -68,13 +72,16 @@ class Schedule(models.Model):
     home_score = models.IntegerField(blank=True, null=True, default=None)
     away_score = models.IntegerField(blank=True, null=True, default=None)
 
-
     class Meta:
         managed = True
         db_table = 'schedule'
 
     def __str__(self):
         return '%s at %s , %s' % (self.away, self.home, self.match_date)
+
+    def get_absolute_url(self):
+      return reverse('game:single_page', args=[str(self.match)])
+
 
 class ScheduleAdmin(admin.ModelAdmin):
     model = Schedule
@@ -83,10 +90,9 @@ class ScheduleAdmin(admin.ModelAdmin):
 class Photo(models.Model):
     team_photo = models.ForeignKey(Teams, blank=True, null=True)
     game = models.ForeignKey(Schedule, blank=True, null=True)
-    upload_date = models.DateTimeField(auto_now_add=True)
-    photo = VersatileImageField(upload_to='gamepics/', blank=True)
+    upload_date = models.DateTimeField(default=datetime.now)
+    photo = VersatileImageField(upload_to='gamepics/', blank=False)
     uploaded_by = models.ForeignKey('auth.User', null=True)
-
 
 class GameNotes(models.Model):
     game = models.ForeignKey(Schedule, blank=True, null=True)
@@ -94,6 +100,25 @@ class GameNotes(models.Model):
     reported_by = models.ForeignKey('auth.User', blank=True, null=True)
     reported_on = models.DateTimeField(auto_now_add=True, null=True)
 
+class Profile(models.Model):
+    user = models.ForeignKey(User, blank=False, null=False)
+    pic = VersatileImageField(upload_to='profile/', blank=True, default="")
+    team = models.ForeignKey(Teams, blank=True, null=True)
+    sport = models.ForeignKey(Sports, blank=True, null=True)
 
+class Info(models.Model):
+    news = models.TextField(blank=True, null=True)
+    author = models.ForeignKey(User, blank=False, null=False)
+    title = models.TextField(blank=True, null=True)
+    reported_on = models.DateTimeField(auto_now_add=True, null=True)
+    priority = models.BooleanField(default=False)
 
+from django.dispatch import receiver
+from allauth.account.signals import user_signed_up
 
+@receiver(user_signed_up)
+def do_stuff_after_sign_up(sender, **kwargs):
+    user = kwargs['user']
+    profile = Profile(user=user)
+    profile.save()
+    user.save()

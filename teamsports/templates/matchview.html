@@ -1,48 +1,46 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<div class="w3-row w3-center">
+{% if game.home_score > game.away_score %}
+    <p><h1><a href="{% url 'TeamView' game.home.team %}">{{game.home}}</a></p> <p>DEF</p> <p><a href="{% url 'TeamView' game.away.team %}">{{game.away}}</a></h1></p>
+    <p><h4>{{game.home}}   {{game.home_score}}</h4></p>
+    <p><h4>{{game.away}}  {{game.away_score}}</h4></p>
+{% elif game.away_score > game.home_score %}
+    <p><h1><a href="{% url 'TeamView' game.away.team %}">{{game.away}}</a></p> <p>DEF</p> <p><a href="{% url 'TeamView' game.home.team %}">{{game.home}}</a></h1></p>
+    <p><h4>{{game.home}}   {{game.home_score}}</h4></p>
+    <p><h4>{{game.away}}  {{game.away_score}}</h4></p>
+{% elif game.home_score is None %}
+    <p><h1>{{game.home}} <p>VS</p> {{game.away}}</h1></p>
+    <p>Playing on {{game.match_date}}</p>
+{% else %}
+    <p><h1><a href="{% url 'TeamView' game.home.team %}">{{game.home}}</a></p> <p>TIE</p> <p><a href="{% url 'TeamView' game.away.team %}">{{game.away}}</a></h1></p>
+    <p><h4>{{game.home}}   {{game.home_score}}</h4></p>
+    <p><h4>{{game.away}}  {{game.away_score}}</h4></p>
+{% endif %}
+</div>
+<a class="w3-btn w3-green" href="{% url 'ScoreReport' game.match %}">Report</a></td>
+<a class="w3-btn w3-yellow" href="{% url 'AddPic' game.match %}">Add Pictures</a></td>
+<div "w3-right">Share this!</div> <div class=" w3-right sharethis-inline-share-buttons"></div>
 
-<div class="row">
-    <div class="col s12 m6 l6">
-        <div class="card">
-            <div class="card title blue lighten-2">
-                <p class="flow-text">
-                    <span class="yellow-text accent-1-text">{{ game.match_date }}</span></p>
-	            {% if game.home_score > game.away_score %}
-	        	    <p class="flow-text"><h4>{{game.home}}   {{game.home_score}}</h4></p>
-	        	    <p class="flow-text"><h4>DEF</h4></p>
-		            <p class="flow-text"><h4>{{game.away}}  {{game.away_score}}</h4></p>
-            	{% elif game.away_score > game.home_score %}
-	        	    <p class="flow-text"><h4>{{game.away}}  {{game.away_score}}</h4></p>
-	        	    <p class="flow-text"><h4>DEF</h4></p>
-	        	    <p class="flow-text"><h4>{{game.home}}  {{game.home_score}}</h4></p>
-            	{% else %}
-	               	<p class="flow-text"><h4>{{game.home}}</h4></p>
-	            	<p class="flow-text"><h4>VS</h4></p>
-	            	<p class="flow-text"><h4>{{game.away}}</h4></p>
-            	{% endif %}
-            </div>
-            <div class="card-content white-text">
-                <p><h4 class="white-text flow-text">Game Notes</h4></p>
-                {% for notes in report %}
-                <p><blockquote>
-                {{notes.notes}}
-                </blockquote></p>
-                <p>Written by - {{ notes.reported_by }} on {{ notes.reported_on }}</p>
-                {% endfor %}
-            </div>
-            <a class="waves-effect waves-light btn red" href="/reportscore/?match={{game.match}}">Report</a>
-            <a class="waves-effect waves-light btn blue" href="/addpic/?game={{game.match}}">Add a picture</a>
-        </div>
-    </div>
-    <div class="col s12 m6">
-    {% for pic in gamepic %}
-        <div class="card">
+<br><br>
+<p><h4>Game Notes</h4></p>
+{% for note in report %}
+<div class="w3-panel w3-leftbar w3-blue w3-third w3-serif">
+    <p><i>{{note.notes}}</i></p>
+    <p>Written by - {{ note.reported_by }} on {{ note.reported_on }}</p>
+</div>
+{% endfor %}
+
+<br><br>
+<div class="w3-row">
+{% for pic in gamepic %}
+    <div class="w3-card w3-quarter">
             <img src="{{pic.photo.thumbnail.400x400}}" />
             <p="flow-text red-text"> Uploaded by {{pic.uploaded_by}}</p>
         </div>
         {% endfor %}
-    </div>
 </div>
+
 
 {% endblock %}

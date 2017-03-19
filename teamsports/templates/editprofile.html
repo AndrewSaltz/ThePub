@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="w3-container">
+    <div class="w3-card w3-half">
+        <header class="w3-container w3-blue">
+            <h1>Welcome {{ user.username }}</h1>
+        </header>
+        {% if my_profile.pic == "" %}
+        <h5>You're good looking. Add a profile picture</h5>
+        {% else %}
+        <img src={{my_profile.pic.url}} class="w3-left w3-circle w3-image" style="width:50%">
+        {% endif %}
+        <h5>Your role is {{ user.group }}</h5>
+        {% if my_profile.team == "" %}
+        {% else %}
+        <h5>Your team is {{my_profile.team}}</h5>
+        {% endif %}
+    </div>
+    <div class="w3-card w3-half">
+    <form class="w3-containter" action="" method="post">{% csrf_token %}
+        <div class="w3-container w3-blue">
+            <h2>Update your profile</h2>
+        </div>
+    {{ form.as_p }}
+    <input type="submit" value="Update" />
+    <button class="w3-btn w3-small w3-right w3-border w3-red w3-border-black"><a href="{% url 'CoachView' %}">Cancel</a></button>
+    </form>
+    </div>
+</div>
+{% endblock %}

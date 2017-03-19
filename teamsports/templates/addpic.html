@@ -1,13 +1,21 @@
 {% extends 'base.html' %}
 
 {% block content %}
+{% load widget_tweaks %}
 <body>
-    <h1>Upload a file!</h1>
-
-<form action="" method="post" enctype="multipart/form-data">
- {% csrf_token %}
+<div class="w3-card w3-half">
+    <header class="w3-blue">
+        <h1>Upload a picture</h1>
+    </header>
+    <h4><b>{{match.home}}</b> vs <b>{{match.away}}</b></h4>
+    <h4>On {{match.match_date}}</h4>
+    <form  method="post" enctype="multipart/form-data">
+            {% csrf_token %}
     {{ form.as_p }}
-    <input type="submit" value="submit" />
-</form>
+        <input class="w3-button w3-green" type="submit" name="submit" value="Submit" />
+        <input class="w3-button w3-yellow" type="submit" name="another" value="Submit and Add Another" />
+    </form>
+</div>
+
 </body>
 {% endblock %}

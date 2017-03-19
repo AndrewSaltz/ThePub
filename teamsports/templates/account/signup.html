@@ -1,0 +1,85 @@
+{% extends "account/base.html" %}
+
+{% load i18n %}
+{% load account socialaccount %}
+
+
+<script>
+  window.fbAsyncInit = function() {
+    FB.init({
+      appId      : '1372764619450781',
+      cookie     : true,
+      xfbml      : true,
+      version    : 'v2.8'
+    });
+    FB.AppEvents.logPageView();
+  };
+
+  (function(d, s, id){
+     var js, fjs = d.getElementsByTagName(s)[0];
+     if (d.getElementById(id)) {return;}
+     js = d.createElement(s); js.id = id;
+     js.src = "//connect.facebook.net/en_US/sdk.js";
+     fjs.parentNode.insertBefore(js, fjs);
+   }(document, 'script', 'facebook-jssdk'));
+</script>
+{% block head_title %}{% trans "Signup" %}{% endblock %}
+
+{% block content %}
+<div class="w3-container w3-row-padding">
+    <div class="w3-card w3-half">
+        <header class="w3-container w3-blue">
+            <h1>{% trans "Sign Up" %}</h1>
+        </header>
+        <h5>{% blocktrans %}Already have an account? Then please <a href="{{ login_url }}">sign in</a>.{% endblocktrans %}</h5>
+        <div class="body">
+            <a class="w3-small w3-left w3-padding-small" href="/accounts/google/login"><img src="/static/img/google-icon.jpg" class="w3-image w3-circle" style="width:60px;height:60px;border:0;"></a>
+            <a class="w3-small w3-left w3-padding-small" href="/accounts/facebook/login"><img src="/static/img/fb-art.png" class="w3-image w3-circle" style="width:60px;height:60px;border:0"></a>
+            <a class="w3-small w3-left w3-padding-small" href="#"><img src="/static/img/instagram.png" class="w3-image w3-circle" style="width:60px;height:60px;border:0"></a>
+            <a class="w3-small w3-left w3-padding-small" href="/accounts/twitter/login"><img src="/static/img/Twitter-icon-vector-400x400.png" class="w3-image w3-circle" style="width:60px;height:60px;border:0"></a>
+            <a class="w3-small w3-left w3-padding-small" href="/accounts/github/login"><img src="/static/img/github.png" class="w3-image w3-circle" style="width:60px;height:60px;border:0"></a>
+        </div>
+        <br><br>
+    {% include "socialaccount/snippets/login_extra.html" %}
+    <p>{% blocktrans %}OR{% endblocktrans %}</p>
+        <form class="signup" id="signup_form" method="post" action="{% url 'account_signup' %}">
+            {% csrf_token %}
+            {{ form.as_p }}
+        {% if redirect_field_value %}
+            <input type="hidden" name="{{ redirect_field_name }}" value="/createprofile/" />
+        {% endif %}
+            <button type="submit">{% trans "Sign Up" %} &raquo;</button>
+        </form>
+    </div>
+    <div class="w3-card w3-half">
+        <header class="w3-container w3-blue">
+            <h1>What account do I need?</h1>
+        </header>
+        <p class="w3-text-blue"><h4>Types of Accounts</h4></p>
+        <h5>By registering with The Pub, you can post pictures and track games. Want more?</h5>
+        <p><strong>Coach</strong></p>
+    <ul style="list-style-type: circle;">
+        Coaches can:
+        <li>Post pictures</li>
+        <li>Add team pictures</li>
+        <li>Edit team information and rosters</li>
+        <li>Report Scores</li>
+        <li>Add Game Notes</li>
+        <li>Gain special access to administrators</li>
+    </ul>
+    <p>Coaches must be officially connected to the team and approved by The Pub.&nbsp;</p>
+    <p>&nbsp;</p>
+    <p><strong>Reporter</strong></p>
+    <ul style="list-style-type: circle;">
+        <li>Reporters can:</li>
+        <li>Post Pictures</li>
+        <li>Report Scores</li>
+        <li>Add Game Notes</li>
+    </ul>
+    <p>Reporters love the pub and accurately report information.&nbsp;</p>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+    <button class="w3-button w3-red">Upgrade Your Account</button>
+    </div>
+</div>
+{% endblock %}

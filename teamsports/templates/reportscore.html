@@ -1,10 +1,21 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<div class="w3-container">
+    <h4>Report on: {{game.home}} @ {{game.away}}, {{game.match_date}}</h4>
+    <p><h4>Current results</h4></p>
+    {% if game.home_score %}
+    <p>{{game.home}} - {{game.home_score}}</p>
+    <p>{{game.away}} - {{game.away_score}}</p>
+    {% else %}}
+    <p>No score yet!</p>
+    {% endif %}
+    <form action="" method="post" enctype="multipart/form-data">{% csrf_token %}
+      {{ form.as_p }}
+    <input type="submit" name="submit" value="Submit" />
+    <input type="submit" name="notes" value="Submit and Add Game Notes" />
+    </form>
+</div>
 
-<form action="" method="post">{% csrf_token %}
-    {{ form.as_p }}
-    <input type="submit" value="Update" />
-</form>
 
 {% endblock %}

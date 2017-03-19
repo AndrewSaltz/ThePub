@@ -7,13 +7,13 @@
 <h1>{{ sport_name.sport_name }}</h1>
 {% for sport in sport %}
     <div class="w3-card" style="width:50%">
-        <a href="/teamview/?team_name={{sport.team}}"><h3 class="header">{{sport.school}} {{sport.sport}}</h3></a>
+        <a href="{% url 'TeamView' sport.team %}"><h3 class="header">{{sport.school}} {{sport.sport}}</h3></a>
         <div class="w3-display-container">
         {% load static %}
         {% if sport.pic == "" %}
-            <a href="/teamview/?team_name={{sport.team}}"> <img src=/media/teampics/emptyfield.jpg style="width:100%"></a>
+            <a href="{% url 'TeamView' sport.team %}"> <img src=/media/teampics/emptyfield.jpg style="width:100%"></a>
         {% else %}
-            <a href="/teamview/?team_name={{sport.team}}"><img src={{sport.pic.url}} style="width:100%"></a>
+            <a href="{% url 'TeamView' sport.team %}"><img src={{sport.pic.url}} style="width:100%"></a>
         {% endif %}
         </div>
         <div class="w3-container w3-center">

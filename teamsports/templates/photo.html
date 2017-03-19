@@ -1,0 +1,63 @@
+<head>
+      <meta name= "description" content = "The #1 Source for all thing in the Philly Public League, by the Paul Robeson High School for Human Services" />
+
+                <!-- CSS -->
+<style>
+ul.share-buttons{
+  list-style: none;
+  padding: 0;
+}
+
+ul.share-buttons li{
+  display: inline;
+}
+
+ul.share-buttons .sr-only {
+  position: absolute;
+  clip: rect(1px 1px 1px 1px);
+  clip: rect(1px, 1px, 1px, 1px);
+  padding: 0;
+  border: 0;
+  height: 1px;
+  width: 1px;
+  overflow: hidden;
+}
+</style>
+        <link rel="stylesheet" href="http://www.w3schools.com/lib/w3.css">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+	    <link rel="stylesheet" type="text/css" href="/static/css/jquery.fancybox.min.css">
+      <!--Let browser know website is optimized for mobile-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta property="og:title" content="Game Picture!" />
+<meta property="og:url" content="{{the_photo.photo.url}}" />
+<meta property="og:image" content="{{the_photo.photo.url}}" />
+<meta property="og:description" content="{{the_photo.game.home}} vs. {{the_photo.game.away}}" />
+<meta property="og:site_name" content="The Pub Philly" />
+<!-- Twitter Meta Tags -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="">
+<meta name="twitter:creator" content="">
+<meta name="twitter:title" content="Game Pic by {{the_photo.uploaded_by}}">
+<meta name="twitter:description" content="The Pub Philly, featuring {{the_photo.home}} vs {{the_photo.away}}. Find your photo!">
+<meta name="twitter:image" content="{{the_photo.photo.url}}">
+</head>
+<body>
+<div class="w3-row">
+    <img class="w3-image w3-border" style="width:100%,height:100%" src="{{the_photo.photo.url}}">
+    <div class="w3-container w3-blue">
+                    <p class="w3-small"><b>{{the_photo.game.home}}</b> vs <b>{{the_photo.game.away}}</b></p>
+                    <p class="w3-small">Uploaded by: <b>{{the_photo.uploaded_by}}</b></p>
+                    <p class="w3-small">{{the_photo.upload_date}}
+                {% if user.is_authenticated %}
+                <a href="{% url 'ReportPhoto' the_photo.id %}" class="w3-orange w3-right">Report</button></a>
+                {% endif %}
+    <div>
+    <ul class="share-buttons">
+  <li><a href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Fmrsaltz.pythonanywhere.com&t=" title="Share on Facebook" target="_blank" onclick="window.open('https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(document.URL) + '&t=' + encodeURIComponent(document.URL)); return false;"><img alt="Share on Facebook" src="{{STATIC_URL}}/static/img/flat_web_icon_set/Facebook.png"></a></li>
+  <li><a href="https://twitter.com/intent/tweet?source=http%3A%2F%2Fmrsaltz.pythonanywhere.com&text=:%20http%3A%2F%2Fmrsaltz.pythonanywhere.com" target="_blank" title="Tweet" onclick="window.open('https://twitter.com/intent/tweet?text=' + encodeURIComponent(document.title) + ':%20'  + encodeURIComponent(document.URL)); return false;"><img alt="Tweet" src="{{STATIC_URL}}/static/img/flat_web_icon_set/Twitter.png"></a></li>
+  <li><a href="mailto:?subject=&body=:%20http%3A%2F%2Fmrsaltz.pythonanywhere.com" target="_blank" title="Send email" onclick="window.open('mailto:?subject=' + encodeURIComponent(document.title) + '&body=' +  encodeURIComponent(document.URL)); return false;"><img alt="Send email" src="{{STATIC_URL}}/static/img/flat_web_icon_set/Email.png"></a></li>
+</ul>
+</div>
+    </div>
+</div>
+</body>
