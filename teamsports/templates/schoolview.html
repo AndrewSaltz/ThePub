@@ -1,25 +1,28 @@
 {% extends 'base.html' %}
-
 {% block content %}
+{% load next_game from teamsports_tags %}
 <title>{{ school }}</title>
-<h1> {{ school }} </h1>
-<table border="3" width="400" height="150" cellpadding="8" cellspacing="8">
-<tr>
-<th>Team Name</th>
-<th>Sport</th>
-<th>Wins</th>
-<th>Losses</th>
-<th>Ties</th>
-</tr>
+<h1 class="highway-blue-text"> {{ school }} </h1>
 
-<tr>
-{% for school_list in school_list %}
-<h2><th>{{ school_list }}</th> <td>{{ school_list.sport_id }}</td> <td>{{ school_list.win }}</td> <td>{{ school_list.loss }}</td><td>{{ school_list.tie }}</td></h2>
-</tr>
+{% for team in school_list %}
+<div class="w3-row">
+<div class="w3-card-8 w3-mobile w3-half w3-border w3-container w3-margin w3-left"  id="card1">
+    <a href="{% url 'TeamView' team.team %}"><h2 class="w3-text-white">{{team}}</h2></a>
+    {% if team.coach %}
+    <h3>Coach: <strong><span class="text-gold">{{team.coach}}</span></strong></h3>
+    {% endif %}
+    {% if team.pic %}
+    <img class="w3-image w3-circle" src={{team.pic.url}}>
+    {% else %}
+    <img class="w3-image w3-circle" src="/media/sportpics/1922–23_Michigan_Wolverines_men's_basketball_team.jpg" style="width:50%">
+    {% endif %}
+        <p>Ugly? Ask your coach to add a real team-pic!</p>
+</div>
+<div class="w3-card-8 w3-container w3-rest w3-margin-top" id="card2" >
+        <h3>Record: {{team.win}} - {{team.loss}} - {{team.tie}}</h3>
+        <h3>Next game: {{team|next_game}}</h3><br>
+</div>
+<br>
 {% endfor %}
-</table>
-
-
-    <li><a href="/home/">Pick another, ya jabroni</a></li>
-
+</div>
 {% endblock %}

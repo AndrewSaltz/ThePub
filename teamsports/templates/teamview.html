@@ -1,31 +1,62 @@
 {% extends 'base.html' %}
 
 {% block content %}
+{% load next_game from teamsports_tags %}
+
 <div class="w3-container">
-        <p><h1>{{team.school}} {{team.sport}}</h1></p>
-        <p><h3>{{team.win}} - {{team.loss}} - {{team.tie}}</h3></p>
+    <div class="w3-dropdown-hover w3-right w3-margin-right">
+    <button class="w3-button w3-border w3-large w3-border-black w3-highway-blue w3-text-highway-blue" >Menu</button>
+        <div class="w3-dropdown-content w3-bar-block w3-border" style="right:0">
+            <a href="#" class="w3-button light-highway-blue" id="btn1">Schedule</a>
+            <a href="#" class="w3-button light-highway-blue" id="btn2">Roster</a>
+            <a href="#" class="w3-button light-highway-blue" id="btn3">Statistics</a>
+            <a href="{% url 'EditTeam' team.pk %}" class="w3-button gold w3-text-black" id="btn3">Update</a>
+        </div>
+    </div>
+    <br><br>
+    <div class = "w3-half">
+        <div class="w3-container w3-margin w3-card-8 light-highway-blue">
+            <p><h1>{{team.school}} {{team.sport}}</h1></p>
+            <p><h3>{{team.win}} - {{team.loss}} - {{team.tie}}</h3></p>
+        </div>
+        <br>
+        <div class="w3-card-8 w3-container w3-margin" id="card2" >
+            <h3 style="text-size:1.0vw">Next game: {{team.pk |next_game}}</h3><br>
+        </div>
+    </div>
+    <div class="w3-rest w3-container w3-margin w3-card-8 light-highway-blue">
+        {% if team.coach %}
+        <h3 >Coach: <strong><span class="text-gold">{{team.coach}}</span></strong></h3>
+        {% endif %}
         {% if team.pic == "" %}
        <p>Hey there, could you add a team picture?</p>
         {% else %}
-       <a href="{% url 'TeamView' team.team %}"><img src={{team.pic.url}} style="width:50%"></a>
+       <a href="{% url 'TeamView' team.team %}"><img src={{team.pic.url}} style="margin-bottom:10px;width:85%"></a>
         {% endif %}
+    </div>
 </div>
-<div class="w3-container">
-    <table class="w3-table-all w3-hoverable w3-responsive">
-    <thead>
-      <tr class="w3-light-blue">
+
+<div class="w3-container" >
+    <table class="w3-table w3-striped w3-hoverable" id="schedule">
+      <thread>
+      <tr class="lighter-highway-blue">
                 <th>Date</th>
                 <th>Opponent</th>
-                <th>Result</th>
                 <th>Score</th>
-                <th></th>
+                <th>Result</th>
                 <th></th>
         </tr>
-    </thread>
+
+        </thread>
+
+    <tbody>
     {% for game in game_list %}
           <tr>
+            {% if game.is_disputed is True %}
+              <td class="w3-orange">DISPUTED <br> {{game.match_date}}</td>
+              {% else %}
               <td>{{game.match_date}}</td>
-        {% if game.home.team == team.team %}
+              {% endif %}        {% if game.home.team == team.team %}
               <td>VS {{game.away}}</td>
               <td>{{game.home_score}} -- {{game.away_score}}</td>
             {% if game.home_score > game.away_score %}
@@ -43,17 +74,63 @@
             {% if game.away_score > game.home_score %}
             <td>Win</td>
             {% elif game.away_score < game.home_score %}
-            <td>Loss</td>
+            <td >Loss</td>
             {% elif game.away_score is None %}
             <td>No Score Yet!</td>
             {% else %}
             <td>Tie</td>
             {% endif %}
         {% endif %}
-        <td><a class="w3-btn w3-green" href="{% url 'ScoreReport' game.match %}">Report</a></td>
-        <td><a class="w3-btn w3-blue" href="{% url 'GameView' game.match %}">See More</a></td>
+        <td style="text-align:center"><a class="w3-margin-right" href="{% url 'ScoreReport' game.match %}"><i class="material-icons md-48 w3-hover-yellow">note_add</i></a>
+        <a class="" href="{% url 'GameView' game.match %}"><i class="material-icons md-48 w3-hover-yellow ">pageview</i></a></td>
         </tr>
+    </tbody>
         {% endfor %}
     </table>
+<!-- Rosters -->
+    <div class="w3-row" id="roster">
+        {% for cap in captain %}
+        <div class="w3-col l4 m4 s6">
+            <div class="captaincard">
+                <h3>{{cap.first_name}} {{cap.last_name}}</h3>
+                <img src="{{cap.pic.url}}" style="width:80%"}}>
+            </div>
+        </div>
+        {% endfor %}
+        {% for player in roster %}
+        <div class="w3-col l4 m4 s6">
+            <div class="playercard">
+                <h3>{{player.first_name}} {{player.last_name}}</h3>
+                <img src="{{player.pic.url}}" style="width:80%; object-fit:fill; margin:auto"}}>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
 </div>
+<script>
+$(document).ready(function(){
+        $("#schedule").show();
+        $("#roster").hide();
+        $("#statistics").hide();
+});
+$(document).ready(function(){
+    $("#btn1").click(function(){
+        $("#schedule").show();
+        $("#roster").hide();
+        $("#statistics").hide();
+    });
+    $("#btn2").click(function(){
+        $("#schedule").hide();
+        $("#roster").show();
+        $("#statistics").hide();
+    });
+    $("#btn3").click(function(){
+        $("#schedule").hide();
+        $("#roster").hide();
+        $("#statistics").show();
+    });
+});
+</script>
+
 {% endblock %}

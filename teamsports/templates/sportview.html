@@ -1,28 +1,90 @@
 {% extends 'base.html' %}
-
+{% load next_game from teamsports_tags %}
 {% block content %}
 <div class="w3-container">
-<div class="w3-row">
-  <div class="w3-col w3-col w3-left">
+<div class="w3-dropdown-hover w3-right">
+    <button class="w3-button w3-border w3-large w3-border-black w3-highway-blue w3-text-highway-blue" >Menu</button>
+        <div class="w3-dropdown-content w3-bar-block w3-border" style="right:0">
+            <a href="#" class="w3-button light-highway-blue" id="btn1">All Teams</a>
+            <a href="#" class="w3-button light-highway-blue" id="btn2">Recent Games</a>
+            <a href="#" class="w3-button light-highway-blue" id="btn3">Upcoming Games</a>
+            <a href="#" class="w3-button light-highway-blue" id="btn3">Standings</a>
+        </div>
+</div>
 <h1>{{ sport_name.sport_name }}</h1>
+</div>
+<div class="w3-row w3-container" id="teams">
+<h2>Teams</h2>
 {% for sport in sport %}
-    <div class="w3-card" style="width:50%">
-        <a href="{% url 'TeamView' sport.team %}"><h3 class="header">{{sport.school}} {{sport.sport}}</h3></a>
-        <div class="w3-display-container">
+    <div class="w3-card-8 w3-margin w3-container w3-col l3 m6 s10" id="card1" style="min-height:420px" >
+        <a href="{% url 'TeamView' sport.team %}"><header><h2 style="font-size:4vmin">{{sport.school}} {{sport.sport}}</h2></header></a>
         {% load static %}
         {% if sport.pic == "" %}
-            <a href="{% url 'TeamView' sport.team %}"> <img src=/media/teampics/emptyfield.jpg style="width:100%"></a>
+            <a href="{% url 'TeamView' sport.team %}"> <img src=/media/teampics/emptyfield.jpg style="display:block;margin:auto;height:auto;min-height:170px;position:absolute"></a>
         {% else %}
-            <a href="{% url 'TeamView' sport.team %}"><img src={{sport.pic.url}} style="width:100%"></a>
+            <a href="{% url 'TeamView' sport.team %}"><img src={{sport.pic.url}} style="display:block;margin:auto;max-height:170px;height:auto;max-width:100%"></a>
         {% endif %}
-        </div>
         <div class="w3-container w3-center">
-            <p><h4> {{sport.win}} - {{sport.loss}} - {{sport.tie}}</h4></p>
-            <p>Next Game:</p>
+            <h4> {{sport.win}} - {{sport.loss}} - {{sport.tie}}</h4>
+            <h4>Next game: {{sport.team|next_game}}</h4>
         </div>
     </div>
   {% endfor %}
-  </div>
 </div>
+<div class="w3-row w3-container" id="recent">
 
+{% for game in recent %}
+    <div class="w3-card-8 w3-margin w3-container w3-col l3 m6 s10" id="card1" style="height:200" >
+     <h4 class="w3-center">{{game.home}} <span class="text-gold">{{game.home_score}}</span><br> VS <br>{{game.away}} <span class="text-gold">{{game.away_score}}</span></h4>
+     <h5>{{game.match_date}}</h5>
+        <a href="{% url 'GameView' game.pk %}"><i class="material-icons md-48 w3-hover-yellow" style="text-align:center" title="See More">pageview</i></a>
+    </div>
+{% endfor %}
+</div>
+<div class="w3-row w3-container" id="upcoming">
+    <h2>Upcoming Games</h2>
+{% for match in upcoming %}
+    <div class="w3-card-8 w3-margin w3-container w3-col l3 m6 s10"   >
+        <h3>{{match.home}} <span class="text-gold">{{match.home_score}}</span> <br> VS <br>{{match.away}} <span class="text-gold">{{match.away_score}}</span></h3>
+        <h5>{{match.match_date}}</h5>
+        <a href="{% url 'GameView' match.pk %}"><i class="material-icons md-48 w3-hover-yellow" title="See More">pageview</i></a>
+    </div>
+{% endfor %}
+</div>
+<script>
+$(document).ready(function(){
+        $("#teams").show();
+        $("#recent").hide();
+        $("#upcoming").hide();
+        $("#standings").hide();
+});
+$(document).ready(function(){
+    $("#btn1").click(function(){
+        $("#teams").show();
+        $("#recent").hide();
+        $("#upcoming").hide();
+        $("#standings").hide();
+    });
+    $("#btn2").click(function(){
+        $("#teams").hide();
+        $("#recent").show();
+        $("#upcoming").hide();
+        $("#standings").hide();
+    });
+    $("#btn3").click(function(){
+        $("#teams").hide();
+        $("#recent").hide();
+        $("#upcoming").show();
+        $("#standings").hide();
+    });
+    $("#btn4").click(function(){
+        $("#teams").hide();
+        $("#recent").hide();
+        $("#upcoming").hide();
+        $("#standings").show();
+    });
+});
+
+
+</script>
 {% endblock %}

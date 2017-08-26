@@ -1,0 +1,11 @@
+Hey, this email was reported for
+Warning:  {{reason}}
+By: {{user}} <br>
+
+Notes: {{notes}} <br>
+
+Email: {{email}} <br>
+
+Picture link:
+
+<a href="/"><img src={{the_photo.photo.url}}></a>

@@ -1,10 +1,15 @@
 {% extends 'base.html' %}
 
 {% block content %}
+{% load teamsports_tags %}
+{% game_day request.user as result %}
+{% if result == True %}
+    {% include 'gameday.html' %}
+{% endif %}
 <div class="w3-container">
-    <div class="w3-card-8 w3-half">
-        <header class="w3-container w3-blue">
-            <h1>Welcome {{ user.username }}</h1>
+    <div id="card" class="w3-card-8 w3-half w3-margin light-gray w3-mobile">
+        <header class="w3-container light-highway-blue">
+            <h1>Welcome {{ my_profile.first_name }} {{my_profile.last_name}} </h1>
         </header>
         {% if my_profile.pic == "" %}
         <h5>You're good looking. Add a profile picture</h5>
@@ -13,43 +18,47 @@
         {% endif %}
         {% if my_profile.team == None %}
         {% else %}
-        <h5>Your team is <a href="{% url 'TeamView' my_profile.team.pk %}">{{my_profile.team}}</a></h5>
+        <h5 class="w3-black">Your team is <a href="{% url 'TeamView' my_profile.team.pk %}">{{my_profile.team}}</a></h5>
         {% endif %}
-    <a href="{% url 'EditProfile' %}"><button class="w3-btn-block w3-yellow">Edit Your Profile</button></a>
+    <a href="{% url 'EditProfile' %}"><button class="w3-btn-block w3-border w3-highway-blue w3-hover-yellow">Edit Your Profile</button></a>
+    <a href="/accounts/password/change"<button class="w3-btn-block w3-border w3-highway-blue w3-hover-yellow">Change your Password</button></a>
+    {% if my_profile.team == None %}
+        {% else %}
+        <br>
+        <a href="{% url 'EditTeam' my_profile.team.pk %}"><button class="w3-btn-block w3-border w3-highway-blue w3-hover-yellow">Edit your team</button></a>
+    {% endif %}
     </div>
-    <div class="w3-card w3-half">
-        <header class="w3-container w3-blue">
+    <div id="card" class="w3-card-8 w3-rest w3-margin w3-mobile">
+        <header class="w3-container light-highway-blue">
             <h1>Updates & Options</h1>
         </header>
         {% for news in important_news %}
-        <button onclick="myFunction('Demo{{news.pk}}')" class="w3-red w3-border w3-btn-block w3-left-align">{{news.title}}</button>
-            <div id="Demo{{news.pk}}" class="w3-container w3-hide">
-                <p class="w3-large"><h6>{{news.news}}</h6></p>
-                <p class="w3-grey">By: {{news.reported_by}}</p>
-                <p class="w3-grey">{{news.reported_on}}</p>
+        <button onclick="myFunction('Demo{{news.pk}}')" class="w3-red w3-border w3-btn-block w3-left-align"><h3>{{news.title}}</h3></button>
+            <div id="Demo{{news.pk}}" class="w3-container light-gray w3-hide">
+                <h4 class="w3-text-black">{{news.news}}</h4><br>
+                <div >
+                    <p class="text-gold">By: {{news.reported_by}}<br>
+                    {{news.reported_on}}</p>
+                </div>
             </div>
          {% endfor %}
         {% for article in newslist %}
-        <button onclick="myFunction('Demo{{article.pk}}')" class="w3-grey w3-border w3-btn-block w3-left-align">{{article.title}}</button>
-            <div id="Demo{{article.pk}}" class="w3-container w3-hide">
-                <p class="w3-large">{{article.news}}</p>
-                <p class="w3-grey">By: {{article.reported_by}}</p>
-                <p class="w3-grey">{{article.reported_on}}</p>
+        <button onclick="myFunction('Demo{{article.pk}}')" class="lighter-highway-blue w3-border w3-btn-block w3-left-align"><h4>{{article.title}}</h4></button>
+            <div id="Demo{{article.pk}}" class="w3-container light-gray w3-hide">
+                <p><h5>{{article.news}}</h5></p>
+                <div class="light-grey">
+                    <p>By: {{article.reported_by}}</p>
+                    <p>{{article.reported_on}}</p>
+                </div>
             </div>
          {% endfor %}
          <br>
-        {% if my_profile.team == None %}
-        {% else %}
-        <br><br>
-        <a href="{% url 'EditTeam' my_profile.team.pk %}"><button class="w3-btn w3-green">Edit your team</button></a>
-        {% endif %}
     </div>
 </div>
-{% if user.group == "Coach" %}
-<div class="w3-container w3-full">
-    <table class="w3-table-all w3-hoverable w3-responsive">
+<div class="w3-container">
+    <table class="w3-table w3-hoverable w3-responsive w3-striped">
     <thread>
-      <tr class="w3-light-blue">
+      <tr class="lighter-highway-blue">
                 <th>Date</th>
                 <th>Opponent</th>
                 <th>Result</th>
@@ -61,9 +70,15 @@
                 <th></th>
         </tr>
     </thread>
-    {% for game in game_list %}
+    <tbody>
+{% if user.groups.all.0.name == "Coach" %}
+    {% for game in upcoming_team %}
           <tr>
+              {% if game.is_disputed is True %}
+              <td class="w3-orange">DISPUTED <br> {{game.match_date}}</td>
+              {% else %}
               <td>{{game.match_date}}</td>
+              {% endif %}
         {% if game.home.team == team.team %}
               <td>VS {{game.away}}</td>
               <td>{{game.home_score}} -- {{game.away_score}}</td>
@@ -88,49 +103,49 @@
             {% else %}
             <td>Tie</td>
             {% endif %}
-        <td><a class="w3-btn w3-green" href="{% url 'ScoreReport' game.match %}">Report</a></td>
-        <td><a class="w3-btn w3-blue" href="{% url 'GameView' game.match %}">See More</a></td>
-        <td><a class="w3-btn w3-orange" href="{% url 'EditGame' game.match %}">Edit</a></td>
-        <td><a class="w3-btn w3-grey" href="{% url 'AddNotes' game.match %}">Add Notes</a></td>
-        <td><a class="w3-btn w3-red" href="{% url 'AddPic' game.match %}">Add Picture</a></td>
+        <td class="w3-hide-medium w3-hide-small"><a class="w3-btn w3-hide-medium light-highway-blue w3-border w3-hover-yellow" href="{% url 'ScoreReport' game.match %}">Report</a></td>
+        <td class="w3-hide-medium w3-hide-small"><a class="w3-btn w3-highway-blue w3-hide-small w3-hide-medium w3-border w3-hover-yellow" href="{% url 'GameView' game.match %}">See More</a></td>
+        <td class="w3-hide-medium w3-hide-small"><a class="w3-btn light-highway-blue w3-hide-small w3-hide-medium w3-border w3-hover-yellow" href="#">Edit</a></td>
+        <td class="w3-hide-medium w3-hide-small"><a class="w3-btn w3-highway-blue w3-hide-small w3-hide-medium w3-border w3-hover-yellow" href="{% url 'AddNotes' game.match %}">Add Notes</a></td>
+        <td class="w3-hide-medium w3-hide-small"><a class="w3-btn light-highway-blue w3-hide-small w3-hide-medium w3-border w3-hover-yellow" href="{% url 'AddPic' game.match %}">Add Picture</a></td>
+		<td class="w3-hide-large w3-bar" style="overflow:auto">
+                    <a class=" w3-circle w3-hover-yellow w3-button light-highway-blue" href="{% url 'ScoreReport' game.match %}"><i class="material-icons md-36">note_add</i></a>
+                    <a class="w3-circle w3-hover-yellow w3-button gold" href="{% url 'GameView' game.match %}"><i class="material-icons md-36">pageview</i></a>
+                    <a class="w3-circle w3-hover-yellow w3-button light-highway-blue" href="#"><i class="material-icons md-36">build</i></a>
+                    <a class="w3-circle w3-hover-yellow w3-button gold" href="{% url 'AddNotes' game.match %}"><i class="material-icons md-36">note</i></a>
+                    <a class="w3-circle w3-hover-yellow w3-button light-highway-blue" href="{% url 'AddPic' game.match %}"><i class="material-icons w3-hover-yellow md-36">camera_enhance</i></a>
+		</td>
         </tr>
     {% endif %}
     {% endfor %}
-    </table>
-</div>
 {% else %}
-<div class="w3-container w3-full">
-    <table class="w3-table-all w3-hoverable w3-responsive">
-    <thread>
-      <tr class="w3-light-blue">
-                <th>Date</th>
-                <th>Home</th>
-                <th>Away</th>
-                <th>Score</th>
-                <th></th>
-                <th></th>
-                <th></th>
-                <th></th>
-     </tr>
-    </thread>
     {% for game in upcoming %}
     <tr>
         <td>{{game.match}}</td>
         <td>{{game.home}}</td>
         <td>{{game.away}}</td>
         <td>{{game.score}}</td>
-        <td><a class="w3-btn w3-green" href="{% url 'ScoreReport' game.match %}">Report</a></td>
-        <td><a class="w3-btn w3-blue" href="{% url 'GameView' game.match %}">See More</a></td>
-        <td><a class="w3-btn w3-grey" href="{% url 'AddNotes' game.match %}">Add Notes</a></td>
-        <td><a class="w3-btn w3-red" href="{% url 'AddPic' game.match %}">Add Picture</a></td>
+        <td><a class="w3-button w3-border highway-blue" href="{% url 'ScoreReport' game.match %}">Report</a></td>
+        <td><a class="w3-button w3-border highway-blue" href="{% url 'GameView' game.match %}">See More</a></td>
+        <td><a class="w3-button w3-border highway-blue" href="{% url 'AddNotes' game.match %}">Add Notes</a></td>
+        <td><a class="w3-button w3-border highway-blue" href="{% url 'AddPic' game.match %}">Add Picture</a></td>
     </tr>
     {% endfor %}
-    </table>
-</div>
 {% endif %}
+    </tbody>
+    </table>
+    </div>
 <script>
 function myFunction(id) {
     var x = document.getElementById(id);
+    if (x.className.indexOf("w3-show") == -1) {
+        x.className += " w3-show";
+    } else {
+        x.className = x.className.replace(" w3-show", "");
+    }
+}
+function coachdrop() {
+    var x = document.getElementById("menu");
     if (x.className.indexOf("w3-show") == -1) {
         x.className += " w3-show";
     } else {

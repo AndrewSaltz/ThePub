@@ -1,28 +1,109 @@
-{% extends 'base.html' %}
 
+{% extends 'base.html' %}
+{% load static teamsports_tags %}
+{% load activity_tags %}
+{% load get_obj pic_game get_pic from teamsports_tags %}
+{% block extra_head_content %}
+<style>
+.overlay {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 100%;
+  width: 100%;
+  opacity: 0;
+  transition: .5s ease;
+  background-color: #f1f1f1;
+}
+
+.container:hover .overlay {
+  opacity: .9;
+}
+
+.text {
+  color: black;
+  font-size: 30px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+}
+</style>
+{% endblock %}
+</style>
 {% block content %}
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-{% load static %}
+{% game_day request.user as result %}
+{% if result == True %}
+    {% include 'gameday.html' %}
+{% endif %}
 <div class="w3-container">
-<div class="w3-row">
+<div class="w3-row w3-row-padding" style:"display:block;">
   <div class="w3-col w3-half w3-center">
-    <h1>Winter Sports</h1>
+    <h1>Spring Sports</h1>
     {% for sport in sport_list %}
-    <div class="w3-card card-12">
+    <div class="w3-card-12 card-12">
         <div class="w3-display-container w3-text-white">
           <a href="{% url 'SportView' sport.sport %}"><img src="{{sport.pic.url}}" style="width:100%"></a>
-             <div class="w3-display-bottomright w3-grey w3-text-white w3-container"><h1>{{sport.sport_name}}</h1></div>
+             <div class="w3-hide-small w3-display-bottomright w3-grey w3-text-white w3-container"><h1>{{sport.sport_name}}</h1></div>
+             <div class="w3-hide-large w3-hide-medium w3-display-bottomright w3-text-white w3-container"><h3>{{sport.sport_name}}</h3></div>
         </div>
     </div>
     <br><br>
     {% endfor %}
  </div>
- <div class="w3-col w3-half  w3-center">
-    <h1>FEED GOES HERE</h1>
- </div>
+     <h1 class="w3-center">Breaking News</h1>
+ <div class="w3-col w3-half w3-center" style="max-height:125vh;overflow:scroll;max-width:100%;object-fit:contain">
+    <script src="https://cdn.rawgit.com/nnattawat/flip/master/dist/jquery.flip.min.js"></script>
+    {% for event in stream %}
+    {% if event.verb == "posted a picture" %}
+    {% with event.target_object_id|pic_game as match %}
+    <div class="container w3-card-12  w3-highway-blue w3-display-container" style="object-fit:contain;min-height:300px">
+        <h3 class="gold w3-text-black ">New Picture</h3>
+            <img src="{{ event.target_object_id|get_pic }}" class="w3-image" style="object-fit:contain">
+        <div class="overlay" >
+            <div class="text" style:"overflow-wrap:break-word">
+                <h3> by {{event.actor}} </h3>
+                <h3>Taken on: {{ event.timestamp }}</h3>
+        <a href="{% url 'GameView' match %}"><h3 class="text-highway-blue">SEE IT</h3></a>
+            </div>
+        </div>
+        <a href="{% url 'GameView' match %}"><i class="material-icons md-48 light-highway-blue w3-hover-yellow">pageview</i></a>
+        {% endwith %}
+    </div>
+    {% elif event.verb == "reported a score" %}
+        <div id="flipcard{{event.id}}" class="w3-container w3-margin-bottom"  style="object-fit:contain;overflow-wrap:break-word">
+        {% with event.target_object_id|get_score as score %}
+        <div class="front w3-border w3-hover-border-yellow w3-middle w3-highway-blue" >
+            <h3 class="light-highway-blue">Score Report</h3>
+            <h4 class="w3-center">{{event.target}}<br>Posted by <strong>{{event.actor}}</strong></h4>
+        </div>
+        <div class="back w3-border w3-hover-border-yellow w3-middle w3-highway-blue" id="activitycard1">
+            <h6>{{event.target}}</h6>
+            <h6>{{score.home}}: {{score.home_score}}<br> {{score.away}}: {{score.away_score}}</h6>
+            <a href="{% url 'GameView' score.pk %}"><i class="material-icons md-48 light-highway-blue w3-hover-yellow">pageview</i></button></a>
+        </div>
+        {% endwith %}
+        <script>
+        $("#flipcard{{event.id}}").flip();
+        </script>
+        </div>
+    {% elif event.verb == "added a note" %}
+        <div class="w3-container w3-margin-bottom w3-border w3-hover-border-yellow light-highway-blue w3-margin-left" style="object-fit:fill;width:100%;height:100%">
+            {% with event.target_object_id|get_notes_game as notes %}
+            <div class="w3-black"><h3>Game Note</h3></div><br><br>
+            <h4><strong>{{event.actor}}</strong><br> added a new note for {{notes.game}}</h4>
+            <a href="{% url 'GameView' notes.game.pk %}"><i class="material-icons md-48 light-highway-blue w3-hover-yellow">pageview</i></button></a>
+            {% endwith %}
+        </div>
+    {% else %}
+    Uh, something went wrong. Also, delete this
+    {% endif %}
+    {% endfor %}
 </div>
 </div>
-        <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.7/js/materialize.min.js"></script>
+</div>
 
 {% endblock %}

@@ -1,46 +1,99 @@
 {% extends 'base.html' %}
-
+{% block extra_head_content %}
+<meta property="og:title" content="Game Time!" />
+<meta property="og:url" content="{% url 'GameView' game.match %}" />
+<meta property="og:image" content="{{game.photo.url}}" />
+<meta property="og:description" content="{{game.home}} vs. {{game.away}}" />
+<meta property="og:site_name" content="The Pub Philly" />
+{% endblock %}
+{% load next_game from teamsports_tags %}
 {% block content %}
-<div class="w3-row w3-center">
+{% if game.is_disputed == True %}
+<div class="w3-container w3-orange w3-margin">
+    <p><h3><strong>This game is disputed</strong></h3></p>
+    <p><h6>"Disputed" means we have two or more different score reports for this game. Until we have a confirmed score, this game
+    will not count towards standings or records.</h6></h></p>
+    <h6>Can you help?  </h6><a href="{% url 'Contact' %}"><button class="w3-button w3-black">Contact Us</button></a>
+</div>
+{% endif %}
+<div class="w3-row w3-container">
 {% if game.home_score > game.away_score %}
+    <div class="w3-card-12 w3-third w3-container" id="card1" >
     <p><h1><a href="{% url 'TeamView' game.home.team %}">{{game.home}}</a></p> <p>DEF</p> <p><a href="{% url 'TeamView' game.away.team %}">{{game.away}}</a></h1></p>
-    <p><h4>{{game.home}}   {{game.home_score}}</h4></p>
-    <p><h4>{{game.away}}  {{game.away_score}}</h4></p>
+    <p><h3>{{game.home}}   <span class="w3-tag w3-highway-blue w3-border w3-border-yellow">{{game.home_score}}</span></h3></p>
+    <p><h3>{{game.away}}  <span class="w3-tag w3-highway-blue w3-text-white">{{game.away_score}}</span></h3></p>
+    <a href="{% url 'ScoreReport' game.match %}"><i class="material-icons md-48 w3-hover-yellow w3-left">note_add</i></a>
+    <a href="{% url 'AddPic' game.match %}"><i class="material-icons md-48 w3-hover-yellow w3-left">camera_enhance</i></a>
+    </div>
 {% elif game.away_score > game.home_score %}
+    <div class="w3-card-12 w3-third w3-container" id="card1">
     <p><h1><a href="{% url 'TeamView' game.away.team %}">{{game.away}}</a></p> <p>DEF</p> <p><a href="{% url 'TeamView' game.home.team %}">{{game.home}}</a></h1></p>
-    <p><h4>{{game.home}}   {{game.home_score}}</h4></p>
-    <p><h4>{{game.away}}  {{game.away_score}}</h4></p>
+    <p><h3>{{game.home}}   <span class="w3-tag w3-highway-blue w3-border w3-border-yellow">{{game.home_score}}</span></h3></p>
+    <p><h3>{{game.away}}   <span class="w3-tag w3-highway-blue w3-text-white">{{game.away_score}}</span></h3></p>
+    <a href="{% url 'ScoreReport' game.match %}"><i class="material-icons md-48 w3-hover-yellow w3-left">note_add</i></a>
+    <a href="{% url 'AddPic' game.match %}"><i class="material-icons md-48 w3-hover-yellow w3-left">camera_enhance</i></a>
+    </div>
 {% elif game.home_score is None %}
+    <div class="w3-card-8 w3-half" id="card1">
     <p><h1>{{game.home}} <p>VS</p> {{game.away}}</h1></p>
     <p>Playing on {{game.match_date}}</p>
+    <a href="{% url 'ScoreReport' game.match %}"><i class="material-icons md-48 w3-hover-yellow w3-left">note_add</i></a>
+    <a href="{% url 'AddPic' game.match %}"><i class="material-icons md-48 w3-hover-yellow w3-left">camera_enhance</i></a>
+ </div>
 {% else %}
+    <div class="w3-card-8 w3-half" id="card1">
     <p><h1><a href="{% url 'TeamView' game.home.team %}">{{game.home}}</a></p> <p>TIE</p> <p><a href="{% url 'TeamView' game.away.team %}">{{game.away}}</a></h1></p>
-    <p><h4>{{game.home}}   {{game.home_score}}</h4></p>
-    <p><h4>{{game.away}}  {{game.away_score}}</h4></p>
+    <p><h4>{{game.home}}    <span class="w3-tag w3-highway-blue w3-text-white">{{game.home_score}}</span></h4></p>
+    <p><h4>{{game.away}}   <span class="w3-tag w3-highway-blue w3-text-white">{{game.away_score}}</span></h4></p>
+    <a href="{% url 'ScoreReport' game.match %}"><i class="material-icons md-48 w3-hover-yellow w3-left">note_add</i></a>
+    <a href="{% url 'AddPic' game.match %}"><i class="material-icons md-48 w3-hover-yellow w3-left">camera_enhance</i></a>
+    </div>
 {% endif %}
-</div>
-<a class="w3-btn w3-green" href="{% url 'ScoreReport' game.match %}">Report</a></td>
-<a class="w3-btn w3-yellow" href="{% url 'AddPic' game.match %}">Add Pictures</a></td>
-<div "w3-right">Share this!</div> <div class=" w3-right sharethis-inline-share-buttons"></div>
+<div class="w3-rest w3-padding left ">
+    <div class="w3-card-8 w3-container" id="card2" >
+        <h3><a href="{% url 'TeamView' game.home.team %}">{{game.home}}</a> ({{game.home.win}} - {{game.home.loss}} - {{game.home.tie}})</h3>
+        <h3>Next game: {{game.home.team|next_game}}</h3><br>
+        <h3><a href="{% url 'TeamView' game.away.team %}">{{game.away}} </a>({{game.away.win}} - {{game.away.loss}} - {{game.away.tie}})</h3>
+        <h3>Next game: {{game.away.team|next_game}}</h3>
+    </div>
+<ul class="share-buttons w3-right">
+            <a href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Fmrsaltz.pythonanywhere.com&t=" title="Share on Facebook" target="_blank" onclick="window.open('https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(document.URL) + '&t=' + encodeURIComponent(document.URL)); return false;"><img alt="Share on Facebook" src="{{STATIC_URL}}/static/img/flat_web_icon_set/Facebook.png"></a>
+            <a href="https://twitter.com/intent/tweet?source=http%3A%2F%2Fmrsaltz.pythonanywhere.com&text=:Check out my game pic" target="_blank" title="Check out my game pic" onclick="window.open('https://twitter.com/intent/tweet?text=' + encodeURIComponent(document.title) + ':%20'  + encodeURIComponent(document.URL)); return false;"><img alt="Tweet" src="{{STATIC_URL}}/static/img/flat_web_icon_set/Twitter.png"></a>
+            <a href="mailto:?subject=&body=:%20http%3A%2F%2Fmrsaltz.pythonanywhere.com" target="_blank" title="Send email" onclick="window.open('mailto:?subject=' + encodeURIComponent(document.title) + '&body=' +  encodeURIComponent(document.URL)); return false;"><img alt="Send email" src="{{STATIC_URL}}/static/img/flat_web_icon_set/Email.png"></a>
 
-<br><br>
-<p><h4>Game Notes</h4></p>
+        </ul>
+</div>
+</div>
+<br>
+<h4>Game Notes</h4>
 {% for note in report %}
-<div class="w3-panel w3-leftbar w3-blue w3-third w3-serif">
-    <p><i>{{note.notes}}</i></p>
+    <div class="w3-third w3-panel w3-leftbar w3-border lighter-highway-blue w3-margin-right">
+    <h5><p><i>{{note.notes}}</i></p></h5>
     <p>Written by - {{ note.reported_by }} on {{ note.reported_on }}</p>
 </div>
 {% endfor %}
 
 <br><br>
-<div class="w3-row">
+<div class="w3-container w3-margin-bottom">
 {% for pic in gamepic %}
-    <div class="w3-card w3-quarter">
-            <img src="{{pic.photo.thumbnail.400x400}}" />
-            <p="flow-text red-text"> Uploaded by {{pic.uploaded_by}}</p>
-        </div>
+   <img src="{{pic.photo.thumbnail.200x200}}" style="cursor:zoom-in"
+  onclick="document.getElementById('modal{{pic.id}}').style.display='block'" class="w3-margin">
+  <div id="modal{{pic.id}}" class="w3-modal" onclick="this.style.display='none'">
+    <span class="w3-button w3-hover-red w3-xlarge w3-display-topright">&times;</span>
+    <div class="w3-modal-content w3-animate-zoom">
+      <img src="{{pic.photo.url}}" style="width:100%">
+      <div class="w3-black">By {{pic.uploaded_by}}</p>
+      <p>On {{pic.upload_date}}</p>
+      <a href="{% url 'ReportPhoto' pic.id %}"><button class="w3-orange w3-right">Report</button></a>
+            <ul class="share-buttons">
+            <a href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Fmrsaltz.pythonanywhere.com&t=" title="Share on Facebook" target="_blank" onclick="window.open('https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(document.URL) + '&t=' + encodeURIComponent(document.URL)); return false;"><img alt="Share on Facebook" src="{{STATIC_URL}}/static/img/flat_web_icon_set/Facebook.png"></a>
+            <a href="https://twitter.com/intent/tweet?source=http%3A%2F%2Fmrsaltz.pythonanywhere.com&text=:%20http%3A%2F%2Fmrsaltz.pythonanywhere.com" target="_blank" title="Tweet" onclick="window.open('https://twitter.com/intent/tweet?text=' + encodeURIComponent(document.title) + ':%20'  + encodeURIComponent(document.URL)); return false;"><img alt="Tweet" src="{{STATIC_URL}}/static/img/flat_web_icon_set/Twitter.png"></a>
+            <a href="mailto:?subject=&body=:%20http%3A%2F%2Fmrsaltz.pythonanywhere.com" target="_blank" title="Send email" onclick="window.open('mailto:?subject=' + encodeURIComponent(document.title) + '&body=' +  encodeURIComponent(document.URL)); return false;"><img alt="Send email" src="{{STATIC_URL}}/static/img/flat_web_icon_set/Email.png"></a>
+        </ul>
+    </div>
+  </div>
+</div>
         {% endfor %}
 </div>
-
 
 {% endblock %}

@@ -2,13 +2,9 @@
 # -*- coding: utf-8 -*-
 from django.db import models
 from django.contrib import admin
-from django.forms import ModelForm
-from django import forms
 from versatileimagefield.fields import VersatileImageField
 from datetime import datetime
 from django.contrib.auth.models import User
-from django.urls import reverse
-
 
 
 # Create your models here.
@@ -39,11 +35,14 @@ class School(models.Model):
     def __str__(self):
         return self.school_name
 
+
 class Teams(models.Model):
     team = models.AutoField(primary_key=True)
     sport = models.ForeignKey(Sports, models.DO_NOTHING, blank=True, null=True)
     division = models.CharField(max_length=225, blank=True, null=True)
     school = models.ForeignKey(School, models.DO_NOTHING, blank=True, null=True)
+    coach = models.CharField(max_length=225, blank=True, null=True)
+    nickname = models.CharField(max_length=225, blank=True, null=True)
     win = models.IntegerField(blank=True, null=True, default=0)
     loss = models.IntegerField(blank=True, null=True, default=0)
     tie = models.IntegerField(blank=True, null=True, default=0)
@@ -64,6 +63,8 @@ class Teams(models.Model):
 class TeamsAdmin(admin.ModelAdmin):
     list_display = ('team', 'sport', 'division', 'school', 'win', 'loss', 'tie', 'pic')
 
+from jsonfield import JSONField
+
 class Schedule(models.Model):
     match = models.AutoField(primary_key=True)
     match_date = models.DateField(blank=True, null=True)
@@ -71,6 +72,8 @@ class Schedule(models.Model):
     away = models.ForeignKey(Teams, related_name='away_set', blank=True, null=True)
     home_score = models.IntegerField(blank=True, null=True, default=None)
     away_score = models.IntegerField(blank=True, null=True, default=None)
+    is_disputed = models.BooleanField(default=False, blank=True)
+    json = JSONField()
 
     class Meta:
         managed = True
@@ -78,9 +81,6 @@ class Schedule(models.Model):
 
     def __str__(self):
         return '%s at %s , %s' % (self.away, self.home, self.match_date)
-
-    def get_absolute_url(self):
-      return reverse('game:single_page', args=[str(self.match)])
 
 
 class ScheduleAdmin(admin.ModelAdmin):
@@ -101,18 +101,31 @@ class GameNotes(models.Model):
     reported_on = models.DateTimeField(auto_now_add=True, null=True)
 
 class Profile(models.Model):
-    user = models.ForeignKey(User, blank=False, null=False)
-    pic = VersatileImageField(upload_to='profile/', blank=True, default="")
+    user = models.OneToOneField(User, blank=False, null=False)
+    pic = VersatileImageField(upload_to='profile/', blank=True, null=True)
     team = models.ForeignKey(Teams, blank=True, null=True)
     sport = models.ForeignKey(Sports, blank=True, null=True)
+    first_name = models.CharField(max_length=225,blank=True, null=True)
+    last_name = models.CharField(max_length=225,blank=True, null=True)
 
-class Info(models.Model):
+class Info(models.Model): #For system-wide news
     news = models.TextField(blank=True, null=True)
     author = models.ForeignKey(User, blank=False, null=False)
     title = models.TextField(blank=True, null=True)
     reported_on = models.DateTimeField(auto_now_add=True, null=True)
     priority = models.BooleanField(default=False)
 
+#Rosters
+from versatileimagefield.placeholder import OnStoragePlaceholderImage
+class Player(models.Model):
+    first_name = models.CharField(max_length=225, blank=True, null=True)
+    last_name = models.CharField(max_length=225, blank=True, null=True)
+    spring_2017_team = models.ForeignKey(Teams, blank=False, null=False)
+    school = models.ForeignKey(School, blank=False, null=False)
+    pic = VersatileImageField(upload_to='player/', null=True, placeholder_image=OnStoragePlaceholderImage('player/blank-person.jpg'))
+    is_captain = models.BooleanField(default=False)
+
+# Don't remember if I'm using this
 from django.dispatch import receiver
 from allauth.account.signals import user_signed_up
 

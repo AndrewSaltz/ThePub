@@ -4,35 +4,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <body>
-
-    <h1>*Your* Public League!</h1>
-
-<h2>Select a Team</h2>
-<form action= {% url 'TeamView' %} method="GET">
-    {{ select_team_form }}
-    <input type="submit" value="Submit" />
-    {{ form.errors }}
+    <div class="w3-container">
+<h2>Search The Pub</h2>
+<form action="{% url 'watson:search' %}">
+    <input name="q" value="{{request.GET.q}}">
+    <input type="submit" value="Go">
 </form>
 
-<h2>Select a Game</h2>
-<form action= {% url 'GameView' %} method="GET">
-    {{ select_match_form }}
-    <input type="submit" value="Submit" />
-    {{ form.errors }}
-</form>
-
-<h2>Select a Sport</h2>
-<form action= {% url 'SportView' %} method="GET">
-    {{ select_sport_form }}
-    <input type="submit" value="Submit" />
-    {{ form.errors }}
-</form>
-
-<h2>Select a School</h2>
-<form action= {% url 'SchoolView' %} method="GET">
-    {{ select_school_form }}
-    <input type="submit" value="Submit" />
-    {{ form.errors }}
-</form>
 </body>
 {% endblock %}

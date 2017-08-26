@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load widget_tweaks %}
+<header class="w3-highway-blue w3-padding"><h1> Contact us</h1></header>
+<div class="w3-card=8">
+    <form action="" method ="post" >{% csrf_token %}
+    {{ form.non_field_errors }}
+    <div class="fieldWrapper w3-margin">
+        {{ form.contact_name.errors }}
+        <label for="{{ form.contact_name.id_for_label }}">Your Name:</label>
+        {{ form.contact_name|add_class:"text_input" }}
+    </div>
+    <div class="fieldWrapper w3-margin">
+        {{ form.contact_email.errors }}
+        <label for="{{ form.contact_email.id_for_label }}">Your Email:</label>
+        {{ form.contact_email|add_class:"text_input" }}
+    </div>
+    <div class="fieldWrapper w3-margin">
+        {{ form.content.errors }}
+        <label for="{{ form.content.id_for_label }}">Your Thoughts:</label><br>
+        {{ form.content|attr:"position:absolute" }}
+    </div>
+    <button class="w3-button w3-highway-blue w3-border" type="submit">Submit</button>
+    <a href="{% url 'home' %}"><div type="cancel" class="w3-button w3-border w3-khaki">Cancel</div></a>
+    </form>
+    <br>
+    <div class="w3-panel">
+        <h3>Or connect with us!</h3>
+        <a class="w3-small w3-left w3-padding-small" href="#"><img src="/static/img/fb-art.png" class="w3-image w3-circle" style="width:60px;height:60px;border:0"></a>
+        <a class="w3-small w3-left w3-padding-small" href="#"><img src="/static/img/Twitter-icon-vector-400x400.png" class="w3-image w3-circle" style="width:60px;height:60px;border:0"></a>
+        <a href="mailto:amsaltz@gmail.com"><i class="material-icons md-48 w3-padding-small">email</i></a>
+    </div>
+</div>
+
+{% endblock %}

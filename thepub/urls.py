@@ -22,14 +22,13 @@ from django.conf.urls.static import static
 
 
 urlpatterns = [
-    url(r'^$', views.home, name='home'),
+    url(r'^$', views.Home.as_view(template_name='teamsports/home.html'), name='home'),
     url(r'^admin/', admin.site.urls),
     url(r'', include('teamsports.urls')),
     #url(r'^login/$', auth_views.login, name='login'),
     #url(r'^logout/$', auth_views.logout, name='logout'),
     url('^', include('django.contrib.auth.urls')),
     url(r'^accounts/', include('allauth.urls')),
-
 ]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 if settings.DEBUG is True:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

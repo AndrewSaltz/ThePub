@@ -5,8 +5,8 @@
 <form method="post">
     {% csrf_token %}
     <p>Are you sure you want to delete {{ object.title }}?</p>
-    <input type="submit" value="yes" />
-    <a href="{% url 'MyPic' %}">no</a>
+    <input class="w3-button w3-green w3-border" type="submit" value="yes" />
+    <a href="photostream/A"><button class="w3-button w3-red w3-border">No</button></a>
 </form>
 
 {% endblock %}

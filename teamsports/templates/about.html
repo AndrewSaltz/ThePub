@@ -1,0 +1,51 @@
+
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="w3-row w3-container w3-camo-grey">
+    <div class="w3-col l6 m10 s12 w3-margin">
+    <header class="w3-highway-blue"><h1>Important Documents</h1></header>
+        <ul class= "w3-ul light-gray">
+            <li><h4 class="text-highway-blue">Medical Forms</h4></li>
+            <li><p><i class="material-icons">insert_drive_file</i>Form 1</p></li>
+            <li><p><i class="material-icons">insert_drive_file</i>Form 2</p></li>
+            <li><h4 class="text-highway-blue"><i class="material-icons">insert_drive_file</i>Expense Report</h4></li>
+            <li><h4 class="text-highway-blue"><i class="material-icons">insert_drive_file</i>>Media Release</h4></li>
+        </ul>
+    </div>
+    <div class="w3-container w3-col l5 m10 s12 w3-mobile w3-margin" >
+        {% include 'snippets/news.html' %}
+    </div>
+
+
+
+<div class="w3-container w3-col s12 w3-margin">
+    <button onclick="myFunction('Demo1')" class="w3-button w3-block w3-left-align w3-light-gray w3-border">
+    What is the Pub?</button>
+    <div id="Demo1" class="w3-hide w3-container light-highway-blue">
+        <p>The Pub is ...</p>
+    </div>
+    <button onclick="myFunction('Demo2')" class="w3-button w3-block w3-left-align w3-light-gray w3-border">
+    The Pub Values</button>
+    <div id="Demo2" class="w3-hide w3-container light-highway-blue">
+        {% include "snippets/values.html" %}
+    </div>
+    <button onclick="myFunction('Demo3')" class="w3-button w3-block w3-left-align w3-light-gray w3-border">
+    Meet The Staff</button>
+    <div id="Demo3" class="w3-hide w3-container light-highway-blue">
+        Add stuff
+    </div>
+
+</div>
+</div>
+<script>
+function myFunction(id) {
+    var x = document.getElementById(id);
+    if (x.className.indexOf("w3-show") == -1) {
+        x.className += " w3-show";
+    } else {
+        x.className = x.className.replace(" w3-show", "");
+    }
+}
+</script>
+{% endblock %}

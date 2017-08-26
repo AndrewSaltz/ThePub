@@ -1,0 +1,1 @@
+default_app_config = 'teamsports.apps.TeamsportsConfig'

@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block extra_head_content %}
+<style>
+ul.share-buttons{
+  list-style: none;
+  padding: 0;
+}
+
+ul.share-buttons li{
+  display: inline;
+}
+
+ul.share-buttons .sr-only {
+  position: absolute;
+  clip: rect(1px 1px 1px 1px);
+  clip: rect(1px, 1px, 1px, 1px);
+  padding: 0;
+  border: 0;
+  height: 1px;
+  width: 1px;
+  overflow: hidden;
+}
+<meta property="og:title" content="Game Time!" />
+<meta property="og:url" content="{{recent.photo.url}}" />
+<meta property="og:image" content="{{recent.photo.photo}}" />
+<meta property="og:description" content="Check out this picture by {{uploaded_by}}" />
+<meta property="og:site_name" content="The Pub Philly" />
+</style>
+{% endblock %}
+{% block content %}
+<h1 class=" w3-center gold text-highway-blue">{{request.user}} Photos</h1>
+
+<div class="w3-dropdown-hover">
+    <button class="w3-button w3-center w3-border w3-xlarge w3-border-black w3-highway-blue w3-text-highway-blue">PhotoStream</button>
+        <div class="w3-dropdown-content w3-bar-block w3-border">
+            <a class="w3-button light-highway-blue" href="/photostream/A">Recent Photos</a>
+            <a class="w3-button light-highway-blue" href="/photostream/B">Today's Photos</a>
+            {% if user.is_authenticated %}
+            <a class="w3-button gold text-highway-blue" href="{% url 'MyPhotoStream' request.user.pk %}">My Pictures</a>
+            {% endif %}
+            <button class="w3-button w3-border w3-right w3-padding" onclick="myFunction()">Search by Team</button>
+        </div>
+</div>
+
+<div id="team" style="display:none; float:right">
+    <form action= "{% url 'TeamPhotoStream' %}" method="GET">
+        {{ form }}
+        <input type="submit" value="Submit" />
+        {{ form.errors }}
+    </form>
+</div>
+<br><br>
+<div class="w3-row">
+{% for object in object_list %}
+  <img src="{{object.photo.thumbnail.200x200}}" class="w3-margin w3-card-8" style="cursor:zoom-in"
+  onclick="document.getElementById('modal{{object.id}}').style.display='block'">
+
+    <div id="modal{{object.id}}" class="w3-modal" onclick="this.style.display='none'">
+        <span class="w3-button w3-hover-red w3-xlarge w3-display-topright">&times;</span>
+        <div class="w3-modal-content w3-animate-zoom">
+            <img src="{{object.photo.url}}" style="width:100%">
+                <div class="light-highway-blue">
+                    <h4>By {{object.uploaded_by}}</h4>
+                    <h4>On {{object.upload_date}}</h4>
+        <a href="{% url 'DeletePic' object.id %}"><button class="w3-khaki w3-button w3-border">Delete</button></a>
+      <a href="{% url 'ReportPhoto' object.id %}"><button class="w3-orange w3-button w3-border">Report</button></a>
+            <ul class="share-buttons">
+              <li><a href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Fmrsaltz.pythonanywhere.com&t=" title="Share on Facebook" target="_blank" onclick="window.open('https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(document.URL) + '&t=' + encodeURIComponent(document.URL)); return false;"><img alt="Share on Facebook" src="{{STATIC_URL}}/static/img/flat_web_icon_set/Facebook.png"></a></li>
+             <li><a href="https://twitter.com/intent/tweet?source=http%3A%2F%2Fmrsaltz.pythonanywhere.com&text=:Check out my game pic" target="_blank" title="Check out my game pic" onclick="window.open('https://twitter.com/intent/tweet?text=' + encodeURIComponent(document.title) + ':%20'  + encodeURIComponent(document.URL)); return false;"><img alt="Tweet" src="{{STATIC_URL}}/static/img/flat_web_icon_set/Twitter.png"></a></li>
+             <li><a href="mailto:?subject=&body=:%20http%3A%2F%2Fmrsaltz.pythonanywhere.com" target="_blank" title="Send email" onclick="window.open('mailto:?subject=' + encodeURIComponent(document.title) + '&body=' +  encodeURIComponent(document.URL)); return false;"><img alt="Send email" src="{{STATIC_URL}}/static/img/flat_web_icon_set/Email.png"></a></li>
+            </ul>
+        </div>
+  </div>
+  </div>
+
+  {% endfor %}
+ </div>
+ <script>
+function myFunction() {
+    var x = document.getElementById('team');
+    if (x.style.display === 'none') {
+        x.style.display = 'block';
+    } else {
+        x.style.display = 'none';
+    }
+}
+</script>
+ {% endblock %}

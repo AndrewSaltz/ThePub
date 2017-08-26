@@ -1,0 +1,26 @@
+<div class="w3-col w3-rest">
+<header class="w3-container light-highway-blue">
+            <h1>The Pub News</h1>
+</header>
+        {% for news in important_news %}
+        <button onclick="myFunction('Important{{news.pk}}')" class="w3-red w3-border w3-btn-block w3-left-align"><h3>{{news.title}}</h3></button>
+            <div id="Important{{news.pk}}" class="w3-container light-gray w3-hide">
+                <h4 class="w3-text-black">{{news.news}}</h4><br>
+                <div >
+                    <p class="text-gold">By: {{news.reported_by}}<br>
+                    {{news.reported_on}}</p>
+                </div>
+            </div>
+         {% endfor %}
+        {% for article in newslist %}
+        <button onclick="myFunction('News{{article.pk}}')" class="lighter-highway-blue w3-border w3-btn-block w3-left-align"><h4>{{article.title}}</h4></button>
+            <div id="News{{article.pk}}" class="w3-container light-gray w3-hide">
+                <p><h5>{{article.news}}</h5></p>
+                <div class="light-grey">
+                    <p>By: {{article.reported_by}}</p>
+                    <p>{{article.reported_on}}</p>
+                </div>
+            </div>
+         {% endfor %}
+         <br>
+    </div>

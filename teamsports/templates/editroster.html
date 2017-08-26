@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load widget_tweaks %}
+
+<div class="light-highway-blue">
+    <h1>Edit for {{team.school}} {{team.sport}}</h1>
+</div>
+<div class="w3-row" id="add">
+    <form action="" method="POST" enctype="multipart/form-data">{% csrf_token %}
+    {{form.management_form}}
+    {% for form in form %}
+    <div class="w3-col l5 m5 s10 w3-card-4 light-highway-blue w3-border w3-margin">
+        <div class="fieldWrapper w3-margin">
+            {{form.first_name|add_class:"text_input"}}
+        </div>
+        <div class="fieldWrapper w3-margin">
+            {{form.last_name|add_class:"text_input"}}
+        </div>
+        <div class="fieldWrapper w3-margin">
+            Captain {{form.is_captain}}
+        </div>
+        <div class="fieldWrapper w3-margin">
+            Team {{form.spring_2017_team}}
+        </div>
+        {{form.pic}}
+    </div>
+    {% endfor %}
+    <br>
+    <div class="w3-container">
+        <button type="Submit" Name="add" class="w3-button w3-border w3-highway-blue">Add</button>
+        <a href="{% url 'TeamView' team.pk %}"><button type="button" class="w3-button w3-khaki">Cancel</button></a>
+    </div>
+    </form>
+
+</div>
+
+{% endblock %}

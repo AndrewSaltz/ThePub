@@ -1,0 +1,16 @@
+<div id = "gameday" class="w3-panel w3-deep-purple w3-padding">
+    {{game_alert}}
+    <h2>Hey there {{ request.user }}, looks like you have a game today. Want to report it?</h2><br>
+    {% for game in game %}
+    <a href ="{% url 'ScoreReport' game.match %}"><button class="w3-button w3-border w3-indigo">Report</button></a>
+    <a href="javascript:showhide('gameday')"><button class="w3-button w3-border w3-pale-grey">No, thanks</button></a>
+    {% endfor %}
+
+</div>
+
+<script>
+    function showhide(id) {
+       	var e = document.getElementById(id);
+       	e.style.display = (e.style.display == 'block') ? 'none' : 'block';
+     }
+</script>

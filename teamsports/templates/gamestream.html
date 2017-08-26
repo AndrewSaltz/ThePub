@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="w3-camo-gray w3-container" style="height:100vh; min-height:100%; overflow:auto">
+<div class="w3-dropdown-hover w3-right">
+    <button class="w3-button w3-border w3-large w3-border-black w3-highway-blue w3-text-highway-blue">GameStream</button>
+        <div class="w3-dropdown-content w3-bar-block w3-border">
+            <a class="w3-button light-highway-blue" href="/gamestream/today">Today's Games</a>
+            <a class="w3-button light-highway-blue" href="/gamestream/recent">Recent Games</a>
+            <a class="w3-button light-highway-blue" href="/gamestream/upcoming">Upcoming</a>
+            <button class="w3-button w3-border w3-right w3-padding" onclick="myFunction()">Search by Team</button>
+
+        </div>
+</div>
+
+<div id="team" style="display:none">
+    <h1>Or Search By Team</h1>
+    <form action= "{% url 'TeamGameStream' %}" method="GET">
+      {{ form }}
+        <input class="w3-button w3-pale-red w3-border" type="submit" value="Submit" />
+        {{ form.errors }}
+    </form>
+</div>
+{% if object_list %}
+{% for object in object_list %}
+<div id="smallcard" class="w3-light-grey w3-col l4 m8 s10  w3-margin-right w3-margin-bottom w3-card-8">
+    <a href="{% url 'GameView' object.match %}" style="text-decoration:none"><button class="w3-button w3-block w3-border lighter-highway-blue w3-text-black w3-hover-yellow" ><h4 style="text-docoration:none">See More</h4></button></a>
+    {% if object.home_score > object.away_score %}
+    <div class="w3-container">
+    <p><h1><a href="{% url 'TeamView' object.home.team %}">{{object.home}}</a></p> <p>DEF</p> <p><a href="{% url 'TeamView' object.away.team %}">{{object.away}}</a></h1></p>
+    <p><h3>{{object.home}}   <span class="w3-tag w3-black w3-border w3-text-white">{{object.home_score}}</span></h3></p>
+    <p><h3>{{object.away}}  <span class="w3-tag w3-black w3-border w3-text-white">{{object.away_score}}</span></h3></p>
+    </div>
+{% elif object.away_score > object.home_score %}
+    <p><h1><a href="{% url 'TeamView' object.away.team %}">{{object.away}}</a></p> <p>DEF</p> <p><a href="{% url 'TeamView' object.home.team %}">{{object.home}}</a></h1></p>
+    <p><h3>{{object.home}}   <span class="w3-tag w3-black w3-border w3-text-white">{{object.home_score}}</span></h3></p>
+    <p><h3>{{object.away}}  <span class="w3-tag w3-black w3-border w3-text-white">{{object.away_score}}</span></h3></p>
+{% elif object.home_score is None %}
+    <p><h1><a href="{% url 'TeamView' object.home.team %}">{{object.home}}</a> <p>VS</p> <a href="{% url 'TeamView' object.away.team %}">{{object.away}}</a></h1></p>
+    <p>Playing on {{object.match_date}}</p>
+{% else %}
+    <p><h1><a href="{% url 'TeamView' object.home.team %}">{{object.home}}</a></p> <p>TIE</p> <p><a href="{% url 'TeamView' object.away.team %}">{{object.away}}</a></h1></p>
+    <p><h3>{{object.home}}   <span class="w3-tag w3-black w3-border w3-text-white">{{object.home_score}}</span></h3></p>
+    <p><h3>{{object.away}}  <span class="w3-tag w3-black w3-border w3-text-white">{{object.away_score}}</span></h3></p>
+{% endif %}
+{% if object.is_disputed == "True" %}
+<div class = "w3-pale-red">
+    </h2>This game is DISPUTED. The score is not yet confirmed. Please check back later</h2>
+</div>
+{% endif %}
+{% if user.is_authenticated %}
+<a href="{% url 'ScoreReport' object.match %}"><i class="material-icons md-48 w3-hover-yellow" title="Report Game">note_add</i></a>
+<a href="{% url 'AddPic' object.match %}"><i class="material-icons md-48 w3-hover-yellow" title="Add a Picture">camera_enhance</i></a>
+{% endif %}
+</div>
+
+{% endfor %}
+{% endif %}
+</div>
+<script>
+function myFunction() {
+    var x = document.getElementById('team');
+    if (x.style.display === 'none') {
+        x.style.display = 'block';
+    } else {
+        x.style.display = 'none';
+    }
+}
+</script>
+{% endblock %}

@@ -2,11 +2,11 @@
 {% block content %}
 <body>
     <div="w3-container">
-        <div="w3-card-8 w3-half">
+        <div class="w3-card-8 w3-half w3-padding">
             <header class="w3-blue">
                 <h2>Report a Picture as Inappropriate</h2>
             </header>
-    <img class="w3-image w3-border" src="{{the_photo.photo.url}}">
+    <img class="w3-image w3-border" src="{{the_photo.photo.url}}" style="width:50%">
                 <br>
     <form action="" method="post">
     {% csrf_token %}
@@ -19,22 +19,23 @@
     </div>
     <br>
     <h6>What else would you like to tell us?</h6>
-    <div class="fieldWrapper">
+    <div class="fieldWrapper w3-left">
     {{ form.notes.errors }}
         <label for="{{ form.notes.id_for_label }}">Other Notes:</label>
     {{ form.notes }}
     </div>
+    <br><br><br>
     <h6>Would you like an email response?</h6>
     <div class="fieldWrapper">
         {{ form.email.errors }}
         <label for="{{ form.email.id_for_label }}">Email subject:</label>
         {{ form.email }}
     </div>
-    <input type="submit" value="Submit" />
+    <input class = "w3-btn w3-red" type="submit" value="Submit" />
         </form>
         </div>
-        <div="w3-card-8 w3-rest w3-container">
-            <p><b>Is something wrong with this picture?</b></p>
+        <div class="w3-card-8 w3-rest w3-container">
+            <header class="w3-blue"><b>Is something wrong with this picture?</b></header>
             <p>Here at The Pub Philly, we have zero tolerance for harrassment of any kind. We encourage users to report any pictures that violate our Terms of Service (Tos).</p>
             <p>If you need something else, do not hesistate to reach out.</p>
             <a href="#"><button class="w3-button w3-yellow">Contact Us</button></a>

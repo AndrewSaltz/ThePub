@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% load watson %}
+
+<div class="w3-center w3-blue">
+    <h1>Search Results</h1>
+    <div id="results" class="w3-white">
+    <table class="w3-table w3-striped w3-bordered">
+        <thread>
+            <th>Result</th>
+            <th>Type</th>
+            <th>Link</th>
+        </thread>
+        {% for result in results %}
+        <tr>
+        <td>{{result.title}}</td>
+        {% if result.content_type_id == 11 %}
+        <td>"School"</td>
+        <td><a href="{% url 'SchoolView' result.object_id %}"><button class="w3-button w3-yellow w3-border">See More</button></a></td>
+        {% elif result.content_type_id == 9 %}
+        <td>"Team"</td>
+        <td><a href="{% url 'TeamView' result.object_id %}"><button class="w3-button w3-yellow w3-border">See More</button></a></td>
+        </tr>
+        {% elif result.content_type_id == 7 %}
+        <td>"Game"</td>
+        <td><a href="{% url 'GameView' result.object_id %}"><button class="w3-button w3-yellow w3-border">See More</button></a></td>
+        {% else %}
+        <td>{{result.content_type_id}}</td>
+        <td class="w3-red">ERROR</td>
+        {% endif %}
+        {% endfor %}
+        </table>
+    </div>
+</div>
+
+{% endblock %}

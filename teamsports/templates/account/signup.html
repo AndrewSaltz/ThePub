@@ -35,7 +35,7 @@
         <div class="body">
             <a class="w3-small w3-left w3-padding-small" href="/accounts/google/login"><img src="/static/img/google-icon.jpg" class="w3-image w3-circle" style="width:60px;height:60px;border:0;"></a>
             <a class="w3-small w3-left w3-padding-small" href="/accounts/facebook/login"><img src="/static/img/fb-art.png" class="w3-image w3-circle" style="width:60px;height:60px;border:0"></a>
-            <a class="w3-small w3-left w3-padding-small" href="#"><img src="/static/img/instagram.png" class="w3-image w3-circle" style="width:60px;height:60px;border:0"></a>
+            <a class="w3-small w3-left w3-padding-small" href="/accounts/instagram/login"><img src="/static/img/instagram.png" class="w3-image w3-circle" style="width:60px;height:60px;border:0"></a>
             <a class="w3-small w3-left w3-padding-small" href="/accounts/twitter/login"><img src="/static/img/Twitter-icon-vector-400x400.png" class="w3-image w3-circle" style="width:60px;height:60px;border:0"></a>
             <a class="w3-small w3-left w3-padding-small" href="/accounts/github/login"><img src="/static/img/github.png" class="w3-image w3-circle" style="width:60px;height:60px;border:0"></a>
         </div>
@@ -48,8 +48,9 @@
         {% if redirect_field_value %}
             <input type="hidden" name="{{ redirect_field_name }}" value="/createprofile/" />
         {% endif %}
-            <button type="submit">{% trans "Sign Up" %} &raquo;</button>
+            <button class="w3-button w3-red" type="submit">{% trans "Sign Up" %} &raquo;</button>
         </form>
+        <a href="/"><button type="button" class="w3-button w3-khaki">Cancel</button></a>
     </div>
     <div class="w3-card w3-half">
         <header class="w3-container w3-blue">

@@ -19,8 +19,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.10/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = ')z8pefh(qfi8wi^8*9tmrz3^z$_tih!v1p7qzc*9jdv5!^!h@8'
+
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -41,7 +40,6 @@ INSTALLED_APPS = [
     'teamsports',
     'debug_toolbar',
     'widget_tweaks',
-    'versatileimagefield',
     'django.contrib.sites',
     'allauth.account',
     'allauth.socialaccount',
@@ -50,9 +48,19 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.facebook',
     'allauth.socialaccount.providers.github',
     'allauth.socialaccount.providers.twitter',
-
+    'allauth.socialaccount.providers.instagram',
+    'actstream',
+    'watson',
+    'versatileimagefield',
 ]
 SITE_ID = 2
+
+ACTSTREAM_SETTINGS = {
+    'FETCH_RELATIONS': True,
+    'USE_PREFETCH': True,
+    'USE_JSONFIELD': False,
+    'GFK_FETCH_DEPTH': 1,
+}
 
 # AllAuth
 # ACCOUNT_SIGNUP_FORM_CLASS = 'teamsports.forms.AllauthSignupForm'
@@ -98,17 +106,7 @@ WSGI_APPLICATION = 'thepub.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.10/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'mrsaltz$publeague',
-        'USER': 'mrsaltz',
-        'PASSWORD': 'ludlow4125',
-        'HOST': 'mrsaltz.mysql.pythonanywhere-services.com',
-        'PORT': '',
 
-    }
-}
 
 
 # Password validation
@@ -142,7 +140,7 @@ AUTHENTICATION_BACKENDS = (
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/New_York'
 
 USE_I18N = True
 
@@ -161,6 +159,66 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 EMAIL_BACKEND = "sgbackend.SendGridBackend"
-SENDGRID_API_KEY = "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"
+SENDGRID_API_KEY = "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"
 
 USE_TZ = True
+VERSATILEIMAGEFIELD_SETTINGS = {
+    # The amount of time, in seconds, that references to created images
+    # should be stored in the cache. Defaults to `2592000` (30 days)
+    'cache_length': 2592000,
+    # The name of the cache you'd like `django-versatileimagefield` to use.
+    # Defaults to 'versatileimagefield_cache'. If no cache exists with the name
+    # provided, the 'default' cache will be used instead.
+    'cache_name': 'versatileimagefield_cache',
+    # The save quality of modified JPEG images. More info here:
+    # https://pillow.readthedocs.io/en/latest/handbook/image-file-formats.html#jpeg
+    # Defaults to 70
+    'jpeg_resize_quality': 70,
+    # The name of the top-level folder within storage classes to save all
+    # sized images. Defaults to '__sized__'
+    'sized_directory_name': '__sized__',
+    # The name of the directory to save all filtered images within.
+    # Defaults to '__filtered__':
+    'filtered_directory_name': '__filtered__',
+    # The name of the directory to save placeholder images within.
+    # Defaults to '__placeholder__':
+    'placeholder_directory_name': '__placeholder__',
+    # Whether or not to create new images on-the-fly. Set this to `False` for
+    # speedy performance but don't forget to 'pre-warm' to ensure they're
+    # created and available at the appropriate URL.
+    'create_images_on_demand': True,
+    # A dot-notated python path string to a function that processes sized
+    # image keys. Typically used to md5-ify the 'image key' portion of the
+    # filename, giving each a uniform length.
+    # `django-versatileimagefield` ships with two post processors:
+    # 1. 'versatileimagefield.processors.md5' Returns a full length (32 char)
+    #    md5 hash of `image_key`.
+    # 2. 'versatileimagefield.processors.md5_16' Returns the first 16 chars
+    #    of the 32 character md5 hash of `image_key`.
+    # By default, image_keys are unprocessed. To write your own processor,
+    # just define a function (that can be imported from your project's
+    # python path) that takes a single argument, `image_key` and returns
+    # a string.
+    'image_key_post_processor': None,
+    # Whether to create progressive JPEGs. Read more about progressive JPEGs
+    # here: https://optimus.io/support/progressive-jpeg/
+    'progressive_jpeg': False
+}
+try:
+    from .settings_secret import *
+except Exception as e:
+  pass
+
+SECRET_KEY = KEY
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': db_name,
+        'USER': db_user,
+        'PASSWORD': db_password,
+        'HOST': 'mrsaltz.mysql.pythonanywhere-services.com',
+        'PORT': '',
+
+    }
+}

@@ -3,19 +3,39 @@
 {% block content %}
 {% load widget_tweaks %}
 <body>
-<div class="w3-card w3-half">
-    <header class="w3-blue">
+<div class="w3-card-8 w3-half">
+    <header id="header" class="light-highway-blue">
         <h1>Upload a picture</h1>
     </header>
     <h4><b>{{match.home}}</b> vs <b>{{match.away}}</b></h4>
     <h4>On {{match.match_date}}</h4>
-    <form  method="post" enctype="multipart/form-data">
+    <form  method="post" enctype="multipart/form-data" id="imgInp">
             {% csrf_token %}
-    {{ form.as_p }}
-        <input class="w3-button w3-green" type="submit" name="submit" value="Submit" />
-        <input class="w3-button w3-yellow" type="submit" name="another" value="Submit and Add Another" />
+        <div class="fieldWrapper w3-margin">
+            <label for="id_photo" class="w3-button w3-border gold w3-text-black w3-block text-highway-blue w3-xlarge"  onclick="document.getElementById('file').click();">Add Picture</label>
+            <input id="id_photo" name="photo" type="file" required="" onchange="upload_img(this);" style="display:none">
+            </div>
+        <div class="w3-container">
+        <img id="img_id" src="#" alt="your image" style="max-width:100%;max-height:100%" />
+        </div>
+        <input class="w3-button w3-highway-blue w3-border" type="submit" name="submit" value="Submit" />
+        <input class="w3-button light-highway-blue w3-border" type="submit" name="another" value="Submit and Add Another" />
     </form>
 </div>
 
 </body>
+<script type="text/javascript">
+        function upload_img(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+                    $('#img_id').attr('src', e.target.result);
+                }
+
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+</script>
 {% endblock %}

@@ -6,3 +6,4 @@ mrsaltz$publeague
 /static
 .DS_Store
 db.sqlite3
+settings_secret.py

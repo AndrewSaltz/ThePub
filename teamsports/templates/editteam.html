@@ -1,10 +1,11 @@
 {% extends 'base.html' %}
-
+{% load widget_tweaks %}
 {% block content %}
 <div class="w3-container">
     <div class="w3-card w3-half">
         <header class="w3-container w3-blue">
-            <p><h1>Editing {{my_team.team}}</h1></p>
+            <h1>Editing {{my_team.school}} {{my_team.sport}}</h1><br>
+            <h1>{{my_team.nickname}}</h1>
             <p><h3>Welcome {{ user.username }}</h3></p>
         </header>
         {% if my_team.pic == "" %}
@@ -18,11 +19,50 @@
         <div class="w3-container w3-blue">
             <h2>Update your team profile</h2>
         </div>
-    {{ form.as_p }}
-    <input type="submit" value="Update" />
-    <button class="w3-btn w3-small w3-right w3-border w3-red w3-border-black"><a href="{% url 'TeamView' my_team.team %}">Cancel</a></button>
+<form  method="post" enctype="multipart/form-data" id="imgInp">
+            {% csrf_token %}
+    <div class="fieldWrapper w3-margin">
+        {{ form.nickname.errors }}
+        <label for="{{ form.nickname.id_for_label }}">Team Nickname:</label>
+        {{ form.nickname|add_class:"text_input" }}
+    </div>
+    <div class="fieldWrapper w3-margin">
+        {{ form.coach.errors }}
+        <label for="{{ form.coach.id_for_label }}">Coach:</label>
+        {{ form.coach|add_class:"text_input" }}
+    </div>
+    </div>
+    <div class="fieldWrapper w3-margin>">
+        {{form.division.errors}}
+        <label for="{{ form.division.id_for_label }}">Division</label>
+        {{ form.division|add_class:"text_input" }}
+    </div>
+    <div class="fieldWrapper w3-margin">
+            <label for="id_photo" class="w3-button w3-border gold text-highway-blue w3-xlarge"  onclick="document.getElementById('file').click();">Team Picture</label>
+            <input id="id_photo" name="pic" type="file" onchange="upload_img(this);" style="display:none">
+    </div>
+     <div class="w3-container w3-right">
+        <img id="img_id" src="#" alt="your image" style="max-width:50%;max-height:50%" />
+    </div>
+    </div>
+    <input class="w3-button w3-highway-blue w3-bar w3-border-black" type="submit" name="submit" value="Submit" />
+    <button class="w3-btn w3-bar w3-right w3-border w3-red w3-border-black"><a href="{% url 'TeamView' my_team.team %}">Cancel</a></button>
+    <button class="w3-button w3-bar light-highway-blue w3-border-black"><a href="{% url 'EditRoster' my_team.pk %}">Edit Roster</a></button>
     </form>
     </div>
 </div>
+<script type="text/javascript">
+        function upload_img(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
 
+                reader.onload = function (e) {
+                    $('#img_id').attr('src', e.target.result);
+                }
+
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+</script>
 {% endblock %}

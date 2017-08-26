@@ -1,21 +1,72 @@
 {% extends 'base.html' %}
-
+{% load widget_tweaks %}
 {% block content %}
-<div class="w3-container">
+<div class="w3-container light-highway-blue w3-border w3-card-8">
     <h4>Report on: {{game.home}} @ {{game.away}}, {{game.match_date}}</h4>
     <p><h4>Current results</h4></p>
     {% if game.home_score %}
-    <p>{{game.home}} - {{game.home_score}}</p>
-    <p>{{game.away}} - {{game.away_score}}</p>
-    {% else %}}
+    <p><h2 >{{game.home}} - <strong>{{game.home_score}}</strong></h2></p>
+    <p><h2>{{game.away}} - <strong>{{game.away_score}}</strong></h2></p>
+    {% else %}
     <p>No score yet!</p>
     {% endif %}
-    <form action="" method="post" enctype="multipart/form-data">{% csrf_token %}
-      {{ form.as_p }}
-    <input type="submit" name="submit" value="Submit" />
-    <input type="submit" name="notes" value="Submit and Add Game Notes" />
-    </form>
 </div>
+<div class="w3-container">
+    <br>
+    <form  method="POST" enctype="multipart/form-data">{% csrf_token %}
+        {% if game.home_score and game.away_score %}
+    <button class="w3-button w3-orange w3-border" type="button" onclick="myFunction()"><h4>Hey, this score is wrong!</h4></button>
+        <div id="id01" class="w3-panel w3-orange w3-display-container" style="display:none">
+            <h6>When we have different scores reported for the same game, that game is "Disputed". Disputed games do not
+            count for standings or record. Once we confirm the correct score, we will update. <strong>If you are
+            certain this score is wrong, please click the button below and enter the correct score</strong></h6>
+            <div class="fieldWrapper">
+                {{ form.is_disputed.errors }}
+                <h5><label for="{{ form.is_disputed.id_for_label }}">Dispute this:</label>
+                {{ form.is_disputed|add_class:"w3-input"}}</h5>
+            </div>
+        </div>
+    {% else %}
+    <div class="fieldWrapper">
+                {{ form.is_disputed.errors }}
+                {{ form.is_disputed.as_hidden}}</h5>
+            </div>
+        {% endif %}
 
+    <div class="fieldWrapper">
+        {{ form.home_score.errors }}
+        <label for="{{ form.home_score.id_for_label }}"><h5>{{game.home}} Score:</h5></label>
+       {{ form.home_score|add_class:"text_input"|add_class:"w3-border"|attr:"type:text"}}
+    </div>
+    <div class="fieldWrapper">
+        {{ form.away_score.errors }}
+        <label for="{{ form.away_score.id_for_label }}"><h6>{{game.away}} Score:</h6></label>
+        {{ form.away_score|add_class:"text_input"|add_class:"w3-border"|attr:"type:text" }}
+    </div>
+<br>
+    <div id="small_buttons" class = "w3-hide-large w3-hide-medium">
+    <button class="icon-button " type="submit" name="submit" value="Submit" /><i class="material-icons md-36" style="">check_circle</i><p>Submit</p></button>
+    <button class="icon-button" type="submit" name="notes" value="Submit and Add Game Notes"/><i class="material-icons md-36">playlist_add_check</i><p>Submit & Add Notes</p></button>
+    <a href="{% url 'GameView' game.match %}"><button type="button" class="icon-button"><i class="material-icons md-36">cancel</i><p>Cancel</p></button></a>
+    </div>
+    <div id="buttons" class="w3-hide-small">
+    <button class="w3-button w3-border w3-highway-blue" type="submit" name="submit" value="Submit" />Submit</button></a>
+    <button class="w3-button w3-border light-highway-blue" type="submit" name="notes" value="Submit and Add Game Notes"/>Submit & Add Notes</button></a>
+    <a href="{% url 'GameView' game.match %}"><button type="button" class="w3-button w3-khaki">Cancel</button></a>
+
+    </div>
+    </form>
+
+
+<script>
+function myFunction() {
+    var x = document.getElementById('id01');
+    if (x.style.display === 'none') {
+        x.style.display = 'block';
+    } else {
+        x.style.display = 'none';
+    }
+}
+</script>
 
 {% endblock %}
